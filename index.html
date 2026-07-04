@@ -1,0 +1,3500 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>履歴書・職務経歴書 作成ツール</title>
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --navy: #1a2f4e;
+      --navy-light: #2c4a72;
+      --primary: #1a2f4e;
+      --accent: #2563a8;
+      --accent-light: #3b7dd8;
+      --gray-100: #f5f6f8;
+      --gray-200: #e8eaed;
+      --gray-300: #d1d5db;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-900: #111827;
+      --white: #ffffff;
+      --danger: #c0392b;
+      --success: #16a34a;
+      --border: #c9cdd4;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+      --radius: 4px;
+      --radius-lg: 8px;
+    }
+
+    html {
+      font-size: 15px;
+      color: var(--gray-900);
+      background: var(--gray-100);
+    }
+
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ===== Header ===== */
+    .site-header {
+      background: var(--navy);
+      color: var(--white);
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+
+    .site-header h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: var(--white);
+    }
+
+    .header-badge {
+      font-size: 0.7rem;
+      background: var(--accent);
+      color: var(--white);
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+      margin-left: auto;
+    }
+
+    /* ===== Layout ===== */
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    /* ===== Form Column ===== */
+    .form-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ===== Section Card ===== */
+    .section-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-header {
+      background: var(--navy);
+      color: var(--white);
+      padding: 0.6rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-header h2 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .section-number {
+      width: 20px;
+      height: 20px;
+      background: var(--accent-light);
+      color: var(--white);
+      border-radius: 50%;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    /* ===== Form Row ===== */
+    .form-row {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .form-row.row-2col {
+      grid-template-columns: 130px 1fr 130px 1fr;
+    }
+
+    .form-row.row-3col {
+      grid-template-columns: 130px 1fr 1fr 1fr;
+    }
+
+    label {
+      font-size: 0.78rem;
+      color: var(--gray-700);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    label .required {
+      color: var(--danger);
+      margin-left: 2px;
+    }
+
+    /* ===== Inputs ===== */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.42rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      font-family: inherit;
+      color: var(--gray-900);
+      background: var(--white);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.6rem center;
+      padding-right: 2rem;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .input-hint {
+      font-size: 0.72rem;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    /* ===== Age Display ===== */
+    .age-display {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      background: #eef4fd;
+      border-radius: var(--radius);
+      border: 1px solid #c3d9f5;
+      min-width: 80px;
+    }
+
+    .age-display span.age-label {
+      font-weight: 400;
+      color: var(--gray-500);
+      font-size: 0.75rem;
+    }
+
+    /* ===== Photo Upload ===== */
+    .photo-area {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .photo-upload-box {
+      width: 100px;
+      height: 130px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: var(--gray-100);
+      transition: border-color 0.15s, background 0.15s;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .photo-upload-box:hover {
+      border-color: var(--accent);
+      background: #f0f5fc;
+    }
+
+    .photo-upload-box input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+    }
+
+    .photo-upload-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      pointer-events: none;
+    }
+
+    .photo-placeholder svg {
+      width: 28px;
+      height: 28px;
+      opacity: 0.35;
+    }
+
+    .photo-placeholder span {
+      font-size: 0.65rem;
+      color: var(--gray-500);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .photo-info {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      line-height: 1.7;
+    }
+
+    .photo-info strong {
+      color: var(--gray-700);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* ===== Dynamic Tables ===== */
+    .dynamic-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .dynamic-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .dynamic-table thead th {
+      background: var(--gray-100);
+      color: var(--gray-700);
+      font-weight: 600;
+      padding: 0.45rem 0.6rem;
+      border: 1px solid var(--border);
+      text-align: left;
+      white-space: nowrap;
+      font-size: 0.76rem;
+      letter-spacing: 0.02em;
+    }
+
+    .dynamic-table tbody td {
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.4rem;
+      vertical-align: middle;
+    }
+
+    .dynamic-table tbody td input[type="text"],
+    .dynamic-table tbody td input[type="number"],
+    .dynamic-table tbody td select {
+      border: none;
+      background: transparent;
+      padding: 0.2rem 0.3rem;
+      font-size: 0.82rem;
+    }
+
+    .dynamic-table tbody td input:focus,
+    .dynamic-table tbody td select:focus {
+      background: #f0f5fc;
+      border-radius: 2px;
+      box-shadow: 0 0 0 2px rgba(37,99,168,0.15);
+    }
+
+    .dynamic-table .col-year { width: 70px; }
+    .dynamic-table .col-month { width: 52px; }
+    .dynamic-table .col-content { }
+    .dynamic-table .col-action { width: 52px; text-align: center; }
+    .dynamic-table .col-qual { width: 85px; }
+
+    /* Heading row */
+    .heading-row td {
+      background: #e8f0fb;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      padding: 0.3rem 0.7rem;
+    }
+
+    /* ===== Buttons ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.42rem 0.9rem;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.8rem;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--white);
+    }
+    .btn-primary:hover { background: var(--navy-light); }
+
+    .btn-secondary {
+      background: var(--gray-200);
+      color: var(--gray-700);
+    }
+    .btn-secondary:hover { background: var(--gray-300); }
+
+    .btn-danger {
+      background: #fef2f2;
+      color: var(--danger);
+      border: 1px solid #fca5a5;
+      padding: 0.2rem 0.45rem;
+      font-size: 0.72rem;
+    }
+    .btn-danger:hover { background: #fee2e2; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .btn-outline:hover { background: #eef4fd; }
+
+    .table-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+
+    /* ===== Radio/Checkbox Groups ===== */
+    .radio-group,
+    .check-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .radio-group label,
+    .check-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: pointer;
+      font-weight: 400;
+      color: var(--gray-900);
+      font-size: 0.85rem;
+    }
+
+    .radio-group input[type="radio"],
+    .check-group input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ===== Fieldset sub-section ===== */
+    .sub-section {
+      border-top: 1px solid var(--gray-200);
+      padding-top: 0.9rem;
+    }
+
+    .sub-section-label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    /* ===== Commute Info ===== */
+    .inline-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .inline-group input {
+      flex: 1;
+      min-width: 60px;
+    }
+
+    .inline-label {
+      font-size: 0.82rem;
+      color: var(--gray-700);
+      white-space: nowrap;
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      position: sticky;
+      top: 72px;
+    }
+
+    /* ===== Preview Section ===== */
+    .preview-section {
+      margin-top: 2rem;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .preview-section-header {
+      background: var(--navy);
+      color: var(--white);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .preview-section-header h2 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .preview-tab-group {
+      display: flex;
+      gap: 0;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .preview-tab {
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      border: none;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.8rem;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      letter-spacing: 0.03em;
+    }
+
+    .preview-tab:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--white);
+    }
+
+    .preview-tab.active {
+      background: var(--white);
+      color: var(--navy);
+    }
+
+    .preview-update-btn {
+      background: var(--accent-light);
+      color: var(--white);
+      border: none;
+      padding: 0.35rem 1rem;
+      font-size: 0.78rem;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .preview-update-btn:hover {
+      background: #5294e8;
+    }
+
+    .preview-viewport {
+      background: #fff;
+      padding: 2rem;
+      overflow-x: auto;
+      min-height: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* A4 document wrapper for scaling. The scale transform lives on the
+       .resume-doc/.career-doc element itself (see scaleDocument()); this
+       wrapper is just resized to match, with no transform of its own. */
+    .doc-scale-wrapper {
+      flex-shrink: 0;
+    }
+
+    /* =====================================================
+       RESUME (履歴書) PREVIEW - A3 Landscape (420mm x 297mm)
+       = two A4 portrait pages (210mm x 297mm) side by side
+       ===================================================== */
+    .resume-doc {
+      width: 420mm;
+      min-height: 297mm;
+      background: #fff;
+      font-family: "MS Mincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
+      font-size: 14px;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      position: relative;
+    }
+
+    .resume-pages {
+      display: flex;
+      flex: 1;
+    }
+
+    .resume-page-left,
+    .resume-page-right {
+      width: 50%;
+      /* 2px avoids uneven anti-aliasing when the on-screen preview is scaled down to fit the viewport */
+      border: 2px solid #333;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* Left page: wide margin on the outer (left) edge, narrow near the center fold (right).
+       Bottom includes the reserved footnote strip below the last table. */
+    .resume-page-left {
+      /* Bottom is the true outer margin — the "記入について" footnote below
+         the history table (not the page padding) accounts for the rest of
+         the space the reference form reserves at the bottom of this page. */
+      padding: 13.8mm 12.4mm 14.6mm 24.7mm;
+    }
+
+    .resume-footnote {
+      margin-top: 2.5mm;
+      font-size: 9px;
+      line-height: 1.6;
+      color: #000;
+    }
+
+    .resume-footnote .resume-footnote-line {
+      display: flex;
+      gap: 0.6em;
+      flex-wrap: nowrap;
+    }
+
+    .resume-footnote .resume-footnote-label {
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+
+    /* Right page: mirrored — narrow margin near the center fold (left), wide on the outer (right) edge. */
+    .resume-page-right {
+      padding: 13.8mm 23.48mm 28.89mm 14.01mm;
+    }
+
+    .resume-page-left {
+      border-right: none;
+    }
+
+    /* Title row */
+    .resume-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .resume-title {
+      font-size: 25px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      line-height: 1;
+    }
+
+    .resume-date-area {
+      font-size: 13px;
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    /* Photo + Name block */
+    .resume-name-photo-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 3px;
+    }
+
+    .resume-name-block {
+      flex: 1;
+    }
+
+    .resume-photo-box {
+      width: 30mm;       /* JIS規格: 横24〜30mm */
+      height: 40mm;      /* JIS規格: 縦36〜40mm */
+      border: 1px solid #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #666;
+      flex-shrink: 0;
+      background: #f9f9f9;
+      overflow: hidden;
+    }
+
+    .resume-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .resume-photo-placeholder {
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* Data table (resume fields) */
+    .resume-field-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 4px;
+    }
+
+    .resume-field-table td,
+    .resume-field-table th {
+      border: 1px solid #333;
+      padding: 3px 6px;
+      font-size: 13px;
+      vertical-align: middle;
+      line-height: 1.4;
+    }
+
+    .resume-field-table .label-cell {
+      background: #fff;
+      white-space: nowrap;
+      width: 74px;
+      font-size: 11px;
+    }
+
+    .resume-field-table .value-cell {
+      font-size: 13px;
+    }
+
+    .resume-field-table .name-cell {
+      font-size: 20px;
+      font-weight: 700;
+      height: 21.97mm;
+      vertical-align: middle;
+    }
+
+    .resume-field-table .kana-cell {
+      font-size: 13px;
+      height: 4.84mm;
+    }
+
+    .resume-field-table .birth-row-cell {
+      height: 12mm;
+    }
+
+    /* Address block rows: heights measured from the reference PDF's cell borders */
+    .resume-field-table .addr-row-a { height: 5.93mm; border-bottom-style: dashed; }
+    .resume-field-table .addr-row-a2 { height: 14.88mm; border-top-style: dashed; }
+    .resume-field-table .addr-row-b { height: 8.11mm; }
+    .resume-field-table .addr-row-c { height: 6.31mm; border-bottom-style: dashed; }
+    .resume-field-table .addr-row-d { height: 14.86mm; border-top-style: dashed; }
+
+    /* History table (学歴・職歴) */
+    .resume-history-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .resume-history-table th,
+    .resume-history-table td {
+      border: 1px solid #333;
+      padding: 1px 4px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    .resume-history-table th {
+      background: #fff;
+      text-align: center;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .resume-history-table .col-year { width: 20.4mm; text-align: center; }
+    .resume-history-table .col-month { width: 9.9mm; text-align: center; }
+    .resume-history-table .col-content { }
+
+    .resume-history-table tbody td {
+      height: 9mm;
+    }
+
+    .resume-history-table .heading-row td {
+      background: none !important;
+      color: #000 !important;
+      text-align: center;
+      font-weight: 700;
+      font-size: 13px !important;
+      letter-spacing: 0.4em;
+      padding: 1px 4px !important;
+    }
+
+    .resume-history-table .empty-row td {
+      height: 9mm;
+    }
+
+    /* Right page sections */
+    .resume-section-title {
+      background: #fff;
+      border: 1px solid #333;
+      border-bottom: none;
+      padding: 3px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .resume-qual-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 6px;
+    }
+
+    .resume-qual-table th,
+    .resume-qual-table td {
+      border: 1px solid #333;
+      padding: 1px 4px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    .resume-qual-table th {
+      background: #fff;
+      text-align: center;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .resume-qual-table .col-year { width: 20.4mm; text-align: center; }
+    .resume-qual-table .col-month { width: 9.9mm; text-align: center; }
+    .resume-qual-table tbody td { height: 9mm; }
+
+    .resume-textarea-box {
+      border: 1px solid #333;
+      padding: 6px;
+      font-size: 13px;
+      min-height: 71px;
+      margin-bottom: 4px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.6;
+    }
+
+    /* Motivation + commute/family block: label-over-value layout
+       (widths/heights measured from the reference PDF) */
+    .mc-wrap {
+      display: flex;
+      border: 1px solid #333;
+      margin-bottom: 4px;
+      min-height: 57.86mm;
+    }
+
+    .mc-motivation {
+      width: 63.4%;
+      border-right: 1px solid #333;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .motivation-label {
+      background: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 3px 6px;
+      border-bottom: 1px solid #333;
+    }
+
+    .motivation-text {
+      padding: 4px 6px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .mc-right-col {
+      width: 36.6%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mc-right-col > .mc-section {
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid #333;
+    }
+
+    .mc-right-col > .mc-section:last-child {
+      border-bottom: none;
+    }
+
+    .mc-right-col > .mc-section:nth-child(1) { height: 19.76mm; }
+    .mc-right-col > .mc-section:nth-child(2) { height: 19.75mm; }
+    .mc-right-col > .mc-section:nth-child(3) { height: 18.35mm; }
+
+    .mc-label {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-bottom: 1px solid #333;
+      white-space: nowrap;
+    }
+
+    .mc-value {
+      font-size: 13px;
+      padding: 3px 6px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .mc-spouse-row {
+      flex-direction: row !important;
+    }
+
+    .mc-spouse-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mc-spouse-col:first-child {
+      border-right: 1px solid #333;
+    }
+
+    /* "※ 有・無" with a circle drawn around whichever is selected */
+    .yn-mark {
+      margin-right: 3px;
+    }
+
+    .yn-circle {
+      display: inline-block;
+      min-width: 1.7em;
+      height: 1.7em;
+      line-height: 1.6em;
+      border: 1px solid #333;
+      border-radius: 50%;
+      text-align: center;
+      padding: 0 1px;
+    }
+
+    .resume-worktype-box {
+      border: 1px solid #333;
+      padding: 6px;
+      font-size: 13px;
+      min-height: 40px;
+      margin-bottom: 4px;
+    }
+
+    .resume-request-box {
+      border: 1px solid #333;
+      padding: 6px;
+      font-size: 13px;
+      min-height: 71px;
+      flex: 1;
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.6;
+    }
+
+    /* =====================================================
+       JOB HISTORY (職務経歴書) PREVIEW - A4 Portrait (210mm x 297mm)
+       At 96dpi: 210mm = ~794px, 297mm = ~1123px
+       ===================================================== */
+    .career-doc {
+      width: 794px;
+      min-height: 1123px;
+      background: #fff;
+      font-family: "MS Mincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
+      font-size: 12px;
+      color: #000;
+      padding: 28px 44px 36px;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+
+    .career-header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .career-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      display: inline-block;
+    }
+
+    .career-meta {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .career-divider {
+      display: none;
+    }
+
+    .career-section {
+      margin-bottom: 10px;
+    }
+
+    .career-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      letter-spacing: 0.02em;
+    }
+    .career-section-title::before {
+      content: "・";
+    }
+
+    .career-employer-title {
+      font-size: 11px;
+      font-weight: 700;
+      margin: 4px 0 2px 1em;
+    }
+    .career-employer-title::before {
+      content: "・";
+    }
+
+    .career-body-text {
+      font-size: 11px;
+      line-height: 1.75;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-left: 1.2em;
+    }
+
+    .career-closing {
+      text-align: right;
+      font-size: 11px;
+      margin-top: 16px;
+      font-weight: 700;
+    }
+
+    /* ===== Preview placeholder state ===== */
+    .preview-empty-msg {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      font-size: 0.9rem;
+      gap: 0.5rem;
+      min-height: 300px;
+      width: 100%;
+    }
+
+    .preview-empty-msg svg {
+      opacity: 0.25;
+    }
+
+    /* ===== Print styles ===== */
+    @media print {
+      /* Ensure colors and backgrounds print correctly */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* Hide all UI elements */
+      .site-header,
+      .form-column,
+      .sidebar,
+      .preview-section-header {
+        display: none !important;
+      }
+
+      .preview-viewport {
+        background: transparent !important;
+        padding: 0 !important;
+        min-height: 0 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+      }
+
+      body {
+        background: #fff;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        background: #fff;
+      }
+
+      .layout {
+        padding: 0;
+        max-width: none;
+        margin: 0;
+      }
+
+      .main-grid {
+        display: block;
+      }
+
+      .preview-section {
+        margin: 0;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        overflow: visible;
+      }
+
+      /* Reset scale transform for print */
+      .doc-scale-wrapper {
+        width: auto !important;
+        height: auto !important;
+      }
+
+      .resume-doc,
+      .career-doc {
+        transform: none !important;
+      }
+
+      /* Resume print mode: A3 landscape (two A4 portrait pages) */
+      body.printing-resume .resume-doc {
+        width: 420mm;
+        min-height: 297mm;
+        font-size: 14px;
+        page-break-after: avoid;
+      }
+
+      body.printing-resume #resumePreviewContent {
+        display: block !important;
+      }
+
+      body.printing-resume #careerPreviewContent {
+        display: none !important;
+      }
+
+      /* Career print mode: A4 portrait */
+      body.printing-career .career-doc {
+        width: 210mm;
+        min-height: 297mm;
+        border: none !important;
+        padding: 15mm 18mm;
+        page-break-after: avoid;
+      }
+
+      body.printing-career #careerPreviewContent {
+        display: block !important;
+      }
+
+      body.printing-career #resumePreviewContent {
+        display: none !important;
+      }
+
+      /* Fallback when no print class is set */
+      body:not(.printing-resume):not(.printing-career) #resumePreviewContent {
+        display: block !important;
+      }
+
+      body:not(.printing-resume):not(.printing-career) #careerPreviewContent {
+        display: block !important;
+      }
+
+      /* Photo in resume must display */
+      .resume-photo-box img {
+        display: block !important;
+      }
+
+      /* Borders and backgrounds for resume/career must print */
+      .resume-doc,
+      .resume-page-left,
+      .resume-page-right,
+      .resume-field-table td,
+      .resume-history-table th,
+      .resume-history-table td,
+      .resume-qual-table th,
+      .resume-qual-table td,
+      .mc-wrap,
+      .mc-motivation,
+      .mc-right-col > .mc-section,
+      .mc-spouse-col,
+      .mc-label,
+      .motivation-label,
+      .resume-worktype-box,
+      .resume-request-box,
+      .resume-section-title,
+      .resume-field-table .label-cell,
+      .resume-history-table th,
+      .resume-history-table .heading-row td,
+      .resume-qual-table th {
+        border-color: #333 !important;
+      }
+
+      .resume-field-table .label-cell,
+      .resume-history-table th,
+      .resume-qual-table th,
+      .mc-label,
+      .motivation-label,
+      .resume-section-title {
+        background-color: #fff !important;
+      }
+    }
+
+    /* Page size is controlled dynamically via JS-injected @page rule in printDocument() */
+
+    /* ===== Responsive ===== */
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        position: static;
+      }
+    }
+
+    /* Tablet: 768px — form rows collapse for readability */
+    @media (max-width: 768px) {
+      .form-row.row-2col {
+        grid-template-columns: 100px 1fr;
+      }
+
+      .form-row.row-3col {
+        grid-template-columns: 100px 1fr 1fr;
+      }
+
+      .dynamic-table .col-year { width: 64px; }
+      .dynamic-table .col-month { width: 50px; }
+    }
+
+    @media (max-width: 600px) {
+      .layout {
+        padding: 0.75rem;
+        gap: 0.75rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row.row-2col {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row.row-3col {
+        grid-template-columns: 1fr;
+      }
+
+      label {
+        margin-bottom: 2px;
+      }
+
+      .section-body {
+        padding: 0.9rem;
+      }
+
+      .photo-area {
+        flex-direction: column;
+      }
+
+      .photo-upload-box {
+        width: 90px;
+        height: 115px;
+      }
+
+      .site-header h1 {
+        font-size: 0.88rem;
+      }
+
+      .preview-viewport {
+        padding: 1rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      html {
+        font-size: 14px;
+      }
+
+      .dynamic-table .col-year { width: 58px; }
+      .dynamic-table .col-month { width: 46px; }
+
+      .table-actions {
+        flex-direction: column;
+      }
+
+      .table-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* ===== Qualification picker modal ===== */
+    .qual-picker-btn {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .qual-picker-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .qual-picker-overlay.open {
+      display: flex;
+    }
+
+    .qual-picker-panel {
+      background: #fdfcf7;
+      width: 100%;
+      max-width: 420px;
+      max-height: 80vh;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    }
+
+    .qual-picker-header {
+      display: flex;
+      align-items: center;
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid var(--gray-300);
+      background: #fdfcf7;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .qual-picker-back {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 0.2rem 0.4rem;
+      visibility: hidden;
+    }
+
+    .qual-picker-back.show {
+      visibility: visible;
+    }
+
+    .qual-picker-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--gray-900);
+    }
+
+    .qual-picker-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      line-height: 1;
+      color: var(--gray-500);
+      cursor: pointer;
+      padding: 0.2rem 0.4rem;
+    }
+
+    .qual-picker-list {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .qual-picker-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--gray-300);
+      padding: 0.95rem 1.1rem;
+      font-size: 0.92rem;
+      font-family: inherit;
+      color: var(--gray-900);
+      cursor: pointer;
+    }
+
+    .qual-picker-item:hover {
+      background: #f3f1e8;
+    }
+
+    .qual-picker-empty {
+      padding: 1.5rem 1.1rem;
+      color: var(--gray-500);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    /* ===== Photo crop modal ===== */
+    .photo-edit-link {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      margin-top: 6px;
+      display: none;
+      text-decoration: underline;
+    }
+
+    .photo-crop-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.55);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .photo-crop-overlay.open {
+      display: flex;
+    }
+
+    .photo-crop-panel {
+      background: #fff;
+      width: 100%;
+      max-width: 340px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+
+    .photo-crop-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--gray-300);
+    }
+
+    .photo-crop-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--gray-900);
+    }
+
+    .photo-crop-close {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      line-height: 1;
+      color: var(--gray-500);
+      cursor: pointer;
+      padding: 0.2rem 0.4rem;
+    }
+
+    .photo-crop-stage {
+      display: flex;
+      justify-content: center;
+      padding: 1.25rem;
+      background: var(--gray-100);
+    }
+
+    .photo-crop-frame {
+      position: relative;
+      width: 210px;
+      height: 280px;
+      overflow: hidden;
+      background: #333;
+      cursor: grab;
+      touch-action: none;
+      box-shadow: 0 0 0 2000px rgba(0,0,0,0.35);
+      border: 2px solid #fff;
+    }
+
+    .photo-crop-frame:active {
+      cursor: grabbing;
+    }
+
+    .photo-crop-frame img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      max-width: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .photo-crop-controls {
+      padding: 0.9rem 1.25rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .photo-crop-controls label {
+      font-size: 0.78rem;
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+
+    .photo-crop-controls input[type="range"] {
+      width: 100%;
+    }
+
+    .photo-crop-hint {
+      font-size: 0.72rem;
+      color: var(--gray-500);
+    }
+
+    .photo-crop-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+
+    .photo-crop-actions .btn {
+      flex: 1;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>履歴書・職務経歴書 作成ツール</h1>
+  <span class="header-badge">Sprint 3</span>
+</header>
+
+<div class="layout">
+  <div class="main-grid">
+    <!-- ===== Main Form Column ===== -->
+    <main class="form-column">
+
+      <!-- Section 1: Personal Info -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-number">1</span>
+          <h2>基本情報</h2>
+        </div>
+        <div class="section-body">
+
+          <!-- Photo -->
+          <div class="photo-area">
+            <div>
+              <div class="photo-upload-box" id="photoBox">
+                <input type="file" id="photo" name="photo" accept="image/jpeg,image/png" aria-label="顔写真を選択">
+                <div class="photo-placeholder" id="photoPlaceholder">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                  </svg>
+                  <span>顔写真<br>JPEG / PNG</span>
+                </div>
+                <img id="photoPreview" alt="顔写真プレビュー">
+              </div>
+              <button type="button" class="photo-edit-link" id="photoEditLink" onclick="openPhotoCropFromDataUrl(photoRawDataUrl)">位置・大きさを調整</button>
+            </div>
+            <div class="photo-info">
+              <strong>顔写真アップロード</strong>
+              縦4cm × 横3cm 目安<br>
+              3ヶ月以内に撮影したもの<br>
+              背景は無地を推奨<br>
+              JPEG / PNG 形式
+            </div>
+          </div>
+
+          <!-- Name -->
+          <div class="form-row row-2col">
+            <label for="name">氏名 <span class="required">*</span></label>
+            <input type="text" id="name" name="name" placeholder="山田 太郎">
+            <label for="kana">ふりがな</label>
+            <input type="text" id="kana" name="kana" placeholder="やまだ たろう">
+          </div>
+
+          <!-- Birth date & Age & Gender -->
+          <div class="form-row">
+            <label>生年月日</label>
+            <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+              <select id="birthYear" name="birthYear" style="width:90px;" aria-label="年">
+                <option value="">年</option>
+              </select>
+              <select id="birthMonth" name="birthMonth" style="width:62px;" aria-label="月">
+                <option value="">月</option>
+              </select>
+              <select id="birthDay" name="birthDay" style="width:62px;" aria-label="日">
+                <option value="">日</option>
+              </select>
+              <div class="age-display" id="ageDisplay" aria-live="polite">
+                <span class="age-label">満</span>
+                <span id="ageValue">—</span>
+                <span class="age-label">歳</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gender -->
+          <div class="form-row">
+            <label>性別</label>
+            <div class="radio-group">
+              <label><input type="radio" id="genderMale" name="gender" value="男"> 男</label>
+              <label><input type="radio" id="genderFemale" name="gender" value="女"> 女</label>
+              <label><input type="radio" id="genderOther" name="gender" value="回答しない"> 回答しない</label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Section 2: Address & Contact -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-number">2</span>
+          <h2>住所・連絡先</h2>
+        </div>
+        <div class="section-body">
+
+          <!-- Postal & Address -->
+          <div class="form-row">
+            <label for="postal">〒 郵便番号</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="text" id="postal" name="postal" placeholder="0000000" maxlength="8" style="max-width:140px;">
+              <span id="postalNote" style="font-size:12px;color:#888;"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="address">住所</label>
+            <input type="text" id="address" name="address" placeholder="東京都新宿区○○町1-2-3">
+          </div>
+
+          <div class="form-row">
+            <label for="addressKana">住所ふりがな</label>
+            <input type="text" id="addressKana" name="addressKana" placeholder="とうきょうとしんじゅくく〇〇ちょう">
+          </div>
+
+          <!-- Phone -->
+          <div class="form-row row-2col">
+            <label for="phone">電話番号</label>
+            <input type="tel" id="phone" name="phone" placeholder="03-0000-0000">
+            <label for="mobile">携帯番号</label>
+            <input type="tel" id="mobile" name="mobile" placeholder="090-0000-0000">
+          </div>
+
+          <div class="form-row">
+            <label for="email">メールアドレス</label>
+            <input type="email" id="email" name="email" placeholder="example@email.com">
+          </div>
+
+          <!-- Contact address (if different) -->
+          <div class="sub-section">
+            <div class="sub-section-label">連絡先（現住所と異なる場合）</div>
+
+            <div class="form-row" style="margin-bottom:0.6rem;">
+              <label><input type="checkbox" id="sameAddress" onchange="toggleContactAddress(this)"> 現住所と同じ</label>
+            </div>
+
+            <div id="contactAddressBlock">
+              <div class="form-row" style="margin-bottom:0.5rem;">
+                <label for="contactPostal">〒 郵便番号</label>
+                <input type="text" id="contactPostal" name="contactPostal" placeholder="000-0000" maxlength="8" style="max-width:140px;">
+              </div>
+              <div class="form-row" style="margin-bottom:0.5rem;">
+                <label for="contactAddress">連絡先住所</label>
+                <input type="text" id="contactAddress" name="contactAddress" placeholder="東京都○○区…">
+              </div>
+              <div class="form-row">
+                <label for="contactPhone">連絡先電話</label>
+                <input type="tel" id="contactPhone" name="contactPhone" placeholder="00-0000-0000">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Section 3: Education & Work History -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-number">3</span>
+          <h2>学歴・職歴</h2>
+        </div>
+        <div class="section-body">
+          <!-- 学歴 -->
+          <div style="margin-bottom:18px;">
+            <div style="font-weight:700;font-size:0.85rem;color:var(--primary);border-left:3px solid var(--primary);padding-left:8px;margin-bottom:8px;">学歴</div>
+            <div class="dynamic-table-wrap">
+              <table class="dynamic-table" id="gakurekiTable">
+                <thead>
+                  <tr>
+                    <th class="col-year">年</th>
+                    <th class="col-month">月</th>
+                    <th class="col-content">内容</th>
+                    <th class="col-action">削除</th>
+                  </tr>
+                </thead>
+                <tbody id="gakurekiBody">
+                </tbody>
+              </table>
+            </div>
+            <div class="table-actions">
+              <button class="btn btn-secondary" onclick="addGakurekiRow()">+ 行を追加</button>
+            </div>
+          </div>
+          <!-- 職歴 -->
+          <div>
+            <div style="font-weight:700;font-size:0.85rem;color:var(--primary);border-left:3px solid var(--primary);padding-left:8px;margin-bottom:8px;">職歴</div>
+            <div class="dynamic-table-wrap">
+              <table class="dynamic-table" id="shokurekiTable">
+                <thead>
+                  <tr>
+                    <th class="col-year">年</th>
+                    <th class="col-month">月</th>
+                    <th class="col-content">内容</th>
+                    <th class="col-action">削除</th>
+                  </tr>
+                </thead>
+                <tbody id="shokurekiBody">
+                </tbody>
+              </table>
+            </div>
+            <div class="table-actions">
+              <button class="btn btn-secondary" onclick="addShokurekiRow()">+ 行を追加</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Licenses & Qualifications -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-number">4</span>
+          <h2>資格・免許</h2>
+        </div>
+        <div class="section-body">
+          <div class="dynamic-table-wrap">
+            <table class="dynamic-table" id="qualTable">
+              <thead>
+                <tr>
+                  <th class="col-year">年</th>
+                  <th class="col-month">月</th>
+                  <th class="col-qual">区分</th>
+                  <th class="col-content">資格・免許名</th>
+                  <th class="col-action">削除</th>
+                </tr>
+              </thead>
+              <tbody id="qualBody">
+                <!-- rows injected by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div class="table-actions">
+            <button class="btn btn-secondary" onclick="addQualRow()">+ 行を追加</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Motivation, Commute, Family -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-number">5</span>
+          <h2>その他・希望条件</h2>
+        </div>
+        <div class="section-body">
+
+          <!-- Motivation -->
+          <div class="form-row">
+            <label for="motivation">志望動機・自己PR</label>
+            <textarea id="motivation" name="motivation" rows="4" placeholder="志望動機・自己PRを入力してください"></textarea>
+          </div>
+
+          <!-- Commute -->
+          <div class="sub-section">
+            <div class="sub-section-label">通勤情報</div>
+            <div class="form-row" style="margin-bottom:0.5rem;">
+              <label for="commuteTime">通勤時間</label>
+              <div class="inline-group">
+                <input type="number" id="commuteHour" name="commuteHour" min="0" max="5" placeholder="0" style="max-width:64px;" aria-label="時間">
+                <span class="inline-label">時間</span>
+                <input type="number" id="commuteMin" name="commuteMin" min="0" max="59" step="5" placeholder="30" style="max-width:64px;" aria-label="分">
+                <span class="inline-label">分</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="commuteMethod">通勤方法</label>
+              <input type="text" id="commuteMethod" name="commuteMethod" placeholder="電車・バス など">
+            </div>
+          </div>
+
+          <!-- Family -->
+          <div class="sub-section">
+            <div class="sub-section-label">家族・扶養</div>
+            <div class="form-row" style="margin-bottom:0.5rem;">
+              <label for="dependents">扶養家族数</label>
+              <div class="inline-group">
+                <input type="number" id="dependents" name="dependents" min="0" max="20" placeholder="0" style="max-width:64px;">
+                <span class="inline-label">名（配偶者を除く）</span>
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom:0.5rem;">
+              <label>配偶者</label>
+              <div class="radio-group">
+                <label><input type="radio" name="spouse" value="有"> 有</label>
+                <label><input type="radio" name="spouse" value="無"> 無</label>
+              </div>
+            </div>
+            <div class="form-row">
+              <label>配偶者扶養義務</label>
+              <div class="radio-group">
+                <label><input type="radio" name="spouseDependent" value="有"> 有</label>
+                <label><input type="radio" name="spouseDependent" value="無"> 無</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Work Hours -->
+          <div class="sub-section">
+            <div class="sub-section-label">勤務希望</div>
+            <div class="form-row" style="margin-bottom:0.5rem;">
+              <label>勤務可能時間帯</label>
+              <div class="check-group">
+                <label><input type="checkbox" name="workHours" value="日勤"> 日勤</label>
+                <label><input type="checkbox" name="workHours" value="夜勤"> 夜勤</label>
+                <label><input type="checkbox" name="workHours" value="早朝"> 早朝</label>
+                <label><input type="checkbox" name="workHours" value="深夜"> 深夜</label>
+                <label><input type="checkbox" name="workHours" value="フルタイム"> フルタイム</label>
+                <label><input type="checkbox" name="workHours" value="パート"> パート</label>
+                <label><input type="checkbox" id="workHoursNone" name="workHours" value="特に希望はありません" onchange="toggleNoPreference(this, 'workHours')"> 特に希望はありません</label>
+              </div>
+            </div>
+            <div class="form-row" style="margin-top:1rem; padding-top:1rem; border-top:1px dashed var(--gray-300);">
+              <label for="personalRequest">本人希望欄</label>
+              <div>
+                <textarea id="personalRequest" name="personalRequest" rows="3" placeholder="給与・職種・勤務地その他についての希望があれば記入してください"></textarea>
+                <label style="display:flex; align-items:center; gap:0.35rem; font-weight:400; font-size:0.78rem; color:var(--gray-500); margin-top:0.4rem;">
+                  <input type="checkbox" id="personalRequestNone" style="width:15px;height:15px;accent-color:var(--accent);flex-shrink:0;" onchange="toggleNoPreference(this, 'personalRequest')">
+                  チェックすると、この欄に「特に希望はありません」と自動入力します
+                </label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Section 6: Work Experience (職務経歴書) -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-number">6</span>
+          <h2>職務経歴書</h2>
+        </div>
+        <div class="section-body">
+
+          <div class="form-row">
+            <label for="careerSummary">職務要約</label>
+            <textarea id="careerSummary" name="careerSummary" rows="4" placeholder="これまでの経歴を3〜5行で要約してください"></textarea>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-section-label">職務経歴詳細 <span style="font-size:0.75rem;font-weight:normal;color:#888;">（職歴セクションから自動反映・新しい順）</span></div>
+            <div id="careerCompanyBlocks">
+              <div style="color:#aaa;font-size:0.85rem;padding:0.75rem 0;">「学歴・職歴」セクションの職歴に会社を入力すると、ここに自動反映されます。</div>
+            </div>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-section-label">保有資格・スキル</div>
+            <div class="form-row">
+              <label for="skillsText">資格・スキル一覧</label>
+              <textarea id="skillsText" name="skillsText" rows="3" placeholder="普通自動車第一種運転免許（20XX年取得）&#10;日商簿記2級 など"></textarea>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ===== Sidebar (quick actions) ===== -->
+    <aside class="sidebar">
+      <div class="section-card">
+        <div class="section-header">
+          <h2 style="font-size:0.82rem;">操作</h2>
+        </div>
+        <div class="section-body" style="gap:0.6rem;">
+          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="updatePreview()">プレビューを更新</button>
+          <button class="btn btn-outline" id="printBtn" style="width:100%;justify-content:center;" onclick="printDocument()">印刷する</button>
+          <button class="btn btn-outline" id="pdfBtn" style="width:100%;justify-content:center;" onclick="downloadPdf()">PDFでダウンロード</button>
+          <button class="btn" id="resetBtn" style="width:100%;justify-content:center;background:#fff5f5;color:var(--danger);border:1px solid #fca5a5;" onclick="resetForm()">入力をリセット</button>
+          <p style="font-size:0.72rem;color:var(--gray-500);margin-top:0.25rem;line-height:1.7;">
+            フォームを入力後「プレビューを更新」で確認できます。下部のプレビューエリアで履歴書・職務経歴書を切り替えられます。入力内容は自動保存されます。
+          </p>
+          <div id="saveIndicator" style="font-size:0.7rem;color:var(--success);display:none;text-align:center;">保存しました</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ===== Preview Section ===== -->
+  <div class="preview-section" id="previewSection">
+    <div class="preview-section-header">
+      <h2>プレビュー</h2>
+      <div class="preview-tab-group" role="tablist">
+        <button class="preview-tab active" id="tabResume" role="tab" aria-selected="true" onclick="switchPreviewTab('resume')">履歴書</button>
+        <button class="preview-tab" id="tabCareer" role="tab" aria-selected="false" onclick="switchPreviewTab('career')">職務経歴書</button>
+      </div>
+      <button class="preview-update-btn" onclick="updatePreview()">プレビューを更新</button>
+    </div>
+
+    <div class="preview-viewport" id="previewViewport">
+      <!-- Resume preview content -->
+      <div id="resumePreviewContent" style="display:block;">
+        <div class="preview-empty-msg" id="resumeEmptyMsg">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="8" y="8" width="48" height="36" rx="2"/>
+            <line x1="16" y1="22" x2="48" y2="22"/>
+            <line x1="16" y1="30" x2="48" y2="30"/>
+            <line x1="16" y1="38" x2="36" y2="38"/>
+          </svg>
+          <span>「プレビューを更新」ボタンを押すと<br>履歴書プレビューが表示されます</span>
+        </div>
+        <div class="doc-scale-wrapper" id="resumeDocWrapper" style="display:none;">
+          <div class="resume-doc" id="resumeDoc">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Career preview content -->
+      <div id="careerPreviewContent" style="display:none;">
+        <div class="preview-empty-msg" id="careerEmptyMsg">
+          <svg width="48" height="64" viewBox="0 0 48 64" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="4" y="4" width="40" height="56" rx="2"/>
+            <line x1="12" y1="20" x2="36" y2="20"/>
+            <line x1="12" y1="28" x2="36" y2="28"/>
+            <line x1="12" y1="36" x2="28" y2="36"/>
+          </svg>
+          <span>「プレビューを更新」ボタンを押すと<br>職務経歴書プレビューが表示されます</span>
+        </div>
+        <div class="doc-scale-wrapper" id="careerDocWrapper" style="display:none;">
+          <div class="career-doc" id="careerDoc">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Qualification picker modal ===== -->
+<div class="qual-picker-overlay" id="qualPickerOverlay" onclick="if(event.target===this) closeQualPicker()">
+  <div class="qual-picker-panel">
+    <div class="qual-picker-header">
+      <button type="button" class="qual-picker-back" id="qualPickerBack" onclick="showQualCategoryList()">‹ 戻る</button>
+      <div class="qual-picker-title" id="qualPickerTitle">カテゴリ</div>
+      <button type="button" class="qual-picker-close" onclick="closeQualPicker()" aria-label="閉じる">×</button>
+    </div>
+    <div class="qual-picker-list" id="qualPickerList"></div>
+  </div>
+</div>
+
+<!-- ===== Photo crop modal ===== -->
+<div class="photo-crop-overlay" id="photoCropOverlay">
+  <div class="photo-crop-panel">
+    <div class="photo-crop-header">
+      <div class="photo-crop-title">写真の位置・大きさを調整</div>
+      <button type="button" class="photo-crop-close" onclick="cancelPhotoCrop()" aria-label="閉じる">×</button>
+    </div>
+    <div class="photo-crop-stage">
+      <div class="photo-crop-frame" id="photoCropFrame">
+        <img id="photoCropImg" alt="">
+      </div>
+    </div>
+    <div class="photo-crop-controls">
+      <label for="photoCropZoom">拡大・縮小</label>
+      <input type="range" id="photoCropZoom" min="100" max="300" value="100">
+      <div class="photo-crop-hint">ドラッグして位置を調整できます</div>
+      <div class="photo-crop-actions">
+        <button type="button" class="btn btn-secondary" onclick="cancelPhotoCrop()">キャンセル</button>
+        <button type="button" class="btn btn-primary" onclick="confirmPhotoCrop()">この位置に決定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== Birth year options =====
+  (function populateBirthYear() {
+    const sel = document.getElementById('birthYear');
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear - 15; y >= currentYear - 80; y--) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y + '年';
+      sel.appendChild(opt);
+    }
+  })();
+
+  // ===== Birth month options =====
+  (function populateBirthMonth() {
+    const sel = document.getElementById('birthMonth');
+    for (let m = 1; m <= 12; m++) {
+      const opt = document.createElement('option');
+      opt.value = m;
+      opt.textContent = m + '月';
+      sel.appendChild(opt);
+    }
+  })();
+
+  // ===== Birth day options =====
+  (function populateBirthDay() {
+    const sel = document.getElementById('birthDay');
+    for (let d = 1; d <= 31; d++) {
+      const opt = document.createElement('option');
+      opt.value = d;
+      opt.textContent = d + '日';
+      sel.appendChild(opt);
+    }
+  })();
+
+  // ===== Age calculation =====
+  function calcAge() {
+    const y = parseInt(document.getElementById('birthYear').value);
+    const m = parseInt(document.getElementById('birthMonth').value);
+    const d = parseInt(document.getElementById('birthDay').value);
+    const el = document.getElementById('ageValue');
+
+    if (!y || !m || !d) {
+      el.textContent = '—';
+      return;
+    }
+
+    const today = new Date();
+    let age = today.getFullYear() - y;
+    const monthDiff = today.getMonth() + 1 - m;
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < d)) {
+      age--;
+    }
+    el.textContent = age >= 0 ? age : '—';
+  }
+
+  document.getElementById('birthYear').addEventListener('change', calcAge);
+  document.getElementById('birthMonth').addEventListener('change', calcAge);
+  document.getElementById('birthDay').addEventListener('change', calcAge);
+
+  // ===== Photo preview (form upload box) =====
+  let photoDataUrl = null;
+
+  document.getElementById('photo').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+      alert('JPEG または PNG 形式の画像を選択してください。');
+      this.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      openPhotoCropFromDataUrl(ev.target.result);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ===== Photo crop tool (pan + zoom to the 3:4 JIS photo frame) =====
+  let photoRawDataUrl = null;
+  const photoCrop = {
+    naturalW: 0, naturalH: 0,
+    frameW: 210, frameH: 280, // must match .photo-crop-frame CSS size (3:4)
+    baseScale: 1, zoom: 1,
+    tx: 0, ty: 0,
+    dragging: false, lastX: 0, lastY: 0
+  };
+
+  function openPhotoCropFromDataUrl(dataUrl) {
+    if (!dataUrl) return;
+    const img = new Image();
+    img.onload = function() {
+      photoRawDataUrl = dataUrl;
+      photoCrop.naturalW = img.naturalWidth;
+      photoCrop.naturalH = img.naturalHeight;
+      photoCrop.baseScale = Math.max(photoCrop.frameW / img.naturalWidth, photoCrop.frameH / img.naturalHeight);
+      photoCrop.zoom = 1;
+      const dispW = img.naturalWidth * photoCrop.baseScale;
+      const dispH = img.naturalHeight * photoCrop.baseScale;
+      photoCrop.tx = (photoCrop.frameW - dispW) / 2;
+      photoCrop.ty = (photoCrop.frameH - dispH) / 2;
+
+      document.getElementById('photoCropImg').src = dataUrl;
+      document.getElementById('photoCropZoom').value = 100;
+      applyPhotoCropTransform();
+      document.getElementById('photoCropOverlay').classList.add('open');
+    };
+    img.src = dataUrl;
+  }
+
+  function applyPhotoCropTransform() {
+    const scale = photoCrop.baseScale * photoCrop.zoom;
+    const cropImg = document.getElementById('photoCropImg');
+    cropImg.style.width = (photoCrop.naturalW * scale) + 'px';
+    cropImg.style.height = (photoCrop.naturalH * scale) + 'px';
+    cropImg.style.transform = `translate(${photoCrop.tx}px, ${photoCrop.ty}px)`;
+  }
+
+  function clampPhotoCropPosition() {
+    const scale = photoCrop.baseScale * photoCrop.zoom;
+    const dispW = photoCrop.naturalW * scale;
+    const dispH = photoCrop.naturalH * scale;
+    const minTx = Math.min(0, photoCrop.frameW - dispW);
+    const minTy = Math.min(0, photoCrop.frameH - dispH);
+    photoCrop.tx = Math.max(minTx, Math.min(0, photoCrop.tx));
+    photoCrop.ty = Math.max(minTy, Math.min(0, photoCrop.ty));
+  }
+
+  const photoCropFrameEl = document.getElementById('photoCropFrame');
+
+  photoCropFrameEl.addEventListener('pointerdown', function(e) {
+    photoCrop.dragging = true;
+    photoCrop.lastX = e.clientX;
+    photoCrop.lastY = e.clientY;
+    photoCropFrameEl.setPointerCapture(e.pointerId);
+  });
+
+  photoCropFrameEl.addEventListener('pointermove', function(e) {
+    if (!photoCrop.dragging) return;
+    const dx = e.clientX - photoCrop.lastX;
+    const dy = e.clientY - photoCrop.lastY;
+    photoCrop.lastX = e.clientX;
+    photoCrop.lastY = e.clientY;
+    photoCrop.tx += dx;
+    photoCrop.ty += dy;
+    clampPhotoCropPosition();
+    applyPhotoCropTransform();
+  });
+
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(evtName => {
+    photoCropFrameEl.addEventListener(evtName, function() {
+      photoCrop.dragging = false;
+    });
+  });
+
+  document.getElementById('photoCropZoom').addEventListener('input', function() {
+    const newZoom = this.value / 100;
+    const oldScale = photoCrop.baseScale * photoCrop.zoom;
+    // Keep the point currently at the frame's center fixed while zooming
+    const centerImgX = (photoCrop.frameW / 2 - photoCrop.tx) / oldScale;
+    const centerImgY = (photoCrop.frameH / 2 - photoCrop.ty) / oldScale;
+    photoCrop.zoom = newZoom;
+    const newScale = photoCrop.baseScale * photoCrop.zoom;
+    photoCrop.tx = photoCrop.frameW / 2 - centerImgX * newScale;
+    photoCrop.ty = photoCrop.frameH / 2 - centerImgY * newScale;
+    clampPhotoCropPosition();
+    applyPhotoCropTransform();
+  });
+
+  function cancelPhotoCrop() {
+    document.getElementById('photoCropOverlay').classList.remove('open');
+    // If there was no photo set before, clear the (now unused) file input
+    if (!photoDataUrl) {
+      document.getElementById('photo').value = '';
+    }
+  }
+
+  function confirmPhotoCrop() {
+    const OUT_W = 360, OUT_H = 480; // 3:4 output resolution
+    const outputScale = OUT_W / photoCrop.frameW;
+    const scale = photoCrop.baseScale * photoCrop.zoom;
+    const canvas = document.createElement('canvas');
+    canvas.width = OUT_W;
+    canvas.height = OUT_H;
+    const ctx = canvas.getContext('2d');
+    const cropImg = document.getElementById('photoCropImg');
+    ctx.drawImage(
+      cropImg,
+      photoCrop.tx * outputScale,
+      photoCrop.ty * outputScale,
+      photoCrop.naturalW * scale * outputScale,
+      photoCrop.naturalH * scale * outputScale
+    );
+
+    photoDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+    const preview = document.getElementById('photoPreview');
+    const placeholder = document.getElementById('photoPlaceholder');
+    preview.src = photoDataUrl;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+    document.getElementById('photoEditLink').style.display = 'inline-block';
+
+    document.getElementById('photoCropOverlay').classList.remove('open');
+    saveToStorage();
+  }
+
+  // ===== 郵便番号→住所自動入力 =====
+  function kataToHira(str) {
+    return (str || '').replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+  }
+
+  async function lookupPostal(zipRaw, addressId, addressKanaId) {
+    const zip = zipRaw.replace(/[^\d]/g, '');
+    if (zip.length !== 7) return;
+    const note = document.getElementById('postalNote');
+    if (window.location.protocol === 'file:') {
+      if (note) note.textContent = '※ 自動入力はサーバー公開後に動作します';
+      return;
+    }
+    if (note) note.textContent = '検索中…';
+    try {
+      const res = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${zip}`);
+      const json = await res.json();
+      if (!json.results) { if (note) note.textContent = '住所が見つかりません'; return; }
+      const r = json.results[0];
+      const addr = r.address1 + r.address2 + r.address3;
+      const kana = kataToHira(r.kana1) + kataToHira(r.kana2) + kataToHira(r.kana3);
+      const addrEl = document.getElementById(addressId);
+      const kanaEl = document.getElementById(addressKanaId);
+      if (addrEl) addrEl.value = addr;
+      if (kanaEl) kanaEl.value = kana;
+      if (note) note.textContent = '';
+      saveToStorage();
+    } catch(e) {
+      if (note) note.textContent = 'ネットワークエラー';
+    }
+  }
+
+  document.getElementById('postal').addEventListener('input', function() {
+    lookupPostal(this.value, 'address', 'addressKana');
+  });
+
+  // Force the address furigana field to hiragana even if typed/pasted as katakana
+  document.getElementById('addressKana').addEventListener('input', function() {
+    const converted = kataToHira(this.value);
+    if (converted !== this.value) {
+      const pos = this.selectionStart;
+      this.value = converted;
+      this.selectionStart = this.selectionEnd = pos;
+    }
+  });
+
+  // ===== Contact address toggle =====
+  function toggleContactAddress(cb) {
+    const block = document.getElementById('contactAddressBlock');
+    block.style.display = cb.checked ? 'none' : 'block';
+  }
+
+  // ===== "No preference" quick-fill for workHours / personalRequest =====
+  function toggleNoPreference(checkbox, mode) {
+    if (mode === 'workHours') {
+      document.querySelectorAll('input[name="workHours"]:not(#workHoursNone)').forEach(cb => {
+        cb.checked = false;
+        cb.disabled = checkbox.checked;
+      });
+    } else if (mode === 'personalRequest') {
+      const textarea = document.getElementById('personalRequest');
+      if (checkbox.checked) {
+        textarea.dataset.prevValue = textarea.value;
+        textarea.value = '特に希望はありません';
+        textarea.disabled = true;
+      } else {
+        textarea.disabled = false;
+        textarea.value = textarea.dataset.prevValue || '';
+      }
+    }
+    saveToStorage();
+  }
+
+  // Checking any specific workHours option clears the "no preference" checkbox
+  document.querySelectorAll('input[name="workHours"]:not(#workHoursNone)').forEach(cb => {
+    cb.addEventListener('change', () => {
+      if (cb.checked) {
+        document.getElementById('workHoursNone').checked = false;
+      }
+    });
+  });
+
+  // ===== History Tables (学歴・職歴 分離) =====
+  let histRowCounter = 0;
+
+  function createGakurekiRow(year, month, school, status) {
+    const id = ++histRowCounter;
+    const tr = document.createElement('tr');
+    tr.dataset.type = 'gakureki';
+    const statusOpts = ['入学','卒業','中退'].map(s =>
+      `<option value="${s}"${(status||'卒業')===s?' selected':''}>${s}</option>`).join('');
+    tr.innerHTML = `
+      <td class="col-year">
+        <input type="number" id="histYear_${id}" value="${year||''}" min="1950" max="2099" placeholder="年">
+      </td>
+      <td class="col-month">
+        <select id="histMonth_${id}" aria-label="月">${monthOptions(month)}</select>
+      </td>
+      <td class="col-content" style="display:flex;gap:4px;align-items:center;">
+        <input type="text" id="histSchool_${id}" value="${school||''}" placeholder="学校名" style="flex:1;">
+        <select id="histStatus_${id}" style="width:72px;flex-shrink:0;">${statusOpts}</select>
+      </td>
+      <td class="col-action">
+        <button class="btn btn-danger" onclick="removeRow('gakurekiBody',this)" aria-label="削除">×</button>
+      </td>
+    `;
+    return tr;
+  }
+
+  function createShokurekiRow(year, month, company, status) {
+    const id = ++histRowCounter;
+    const tr = document.createElement('tr');
+    tr.dataset.type = 'shokureki';
+    const statusOpts = ['入社','退社','在籍中'].map(s =>
+      `<option value="${s}"${(status||'入社')===s?' selected':''}>${s}</option>`).join('');
+    tr.innerHTML = `
+      <td class="col-year">
+        <input type="number" id="histYear_${id}" value="${year||''}" min="1950" max="2099" placeholder="年">
+      </td>
+      <td class="col-month">
+        <select id="histMonth_${id}" aria-label="月">${monthOptions(month)}</select>
+      </td>
+      <td class="col-content" style="display:flex;gap:4px;align-items:center;">
+        <input type="text" id="histCompany_${id}" value="${company||''}" placeholder="会社名" style="flex:1;">
+        <select id="histStatus_${id}" style="width:72px;flex-shrink:0;">${statusOpts}</select>
+      </td>
+      <td class="col-action">
+        <button class="btn btn-danger" onclick="removeRow('shokurekiBody',this)" aria-label="削除">×</button>
+      </td>
+    `;
+    return tr;
+  }
+
+  function addGakurekiRow(year, month, school, status) {
+    document.getElementById('gakurekiBody').appendChild(createGakurekiRow(year, month, school, status));
+  }
+
+  function addShokurekiRow(year, month, company, status) {
+    document.getElementById('shokurekiBody').appendChild(createShokurekiRow(year, month, company, status));
+  }
+
+  // 旧API互換
+  function addHistoryRow() { addGakurekiRow(); }
+  function insertHeading(tbodyId, label) {
+    if (label === '職歴') addShokurekiRow();
+    else addGakurekiRow();
+  }
+
+  // ===== Parse shokureki rows into company periods (newest first) =====
+  function parseShokurekiRows(rows) {
+    const companies = {};
+    rows.forEach(row => {
+      if (!row.name) return;
+      const key = row.name.trim();
+      if (!companies[key]) companies[key] = { name: key, entries: [] };
+      companies[key].entries.push({
+        year: parseInt(row.year) || 0,
+        month: parseInt(row.month) || 0,
+        status: row.status || ''
+      });
+    });
+    return Object.values(companies).map(co => {
+      const sorted = co.entries.slice().sort((a, b) => a.year - b.year || a.month - b.month);
+      const start = sorted.find(e => e.status === '入社') || sorted[0];
+      const end = sorted.find(e => e.status === '退社' || e.status === '在籍中') || sorted[sorted.length - 1];
+      return {
+        name: co.name,
+        startYear: start ? start.year : 0,
+        startMonth: start ? start.month : 0,
+        endStatus: end ? end.status : '',
+        endYear: end ? end.year : 0,
+        endMonth: end ? end.month : 0,
+        sortKey: end ? end.year * 100 + end.month : (start ? start.year * 100 + start.month : 0)
+      };
+    }).sort((a, b) => b.sortKey - a.sortKey);
+  }
+
+  // ===== Sync career company blocks in Section 6 from shokureki =====
+  function syncCareerBlocks() {
+    const rows = [];
+    document.querySelectorAll('#shokurekiBody tr').forEach(tr => {
+      const yearInput = tr.querySelector('input[type="number"]');
+      const selects = tr.querySelectorAll('select');
+      const textInput = tr.querySelector('input[type="text"]');
+      rows.push({
+        year: yearInput ? yearInput.value : '',
+        month: selects[0] ? selects[0].value : '',
+        name: textInput ? textInput.value : '',
+        status: selects[1] ? selects[1].value : ''
+      });
+    });
+
+    const companies = parseShokurekiRows(rows);
+    const container = document.getElementById('careerCompanyBlocks');
+
+    // Preserve existing textarea values before re-rendering
+    const saved = {};
+    container.querySelectorAll('.career-co-block').forEach(block => {
+      const key = block.dataset.company;
+      if (!key) return;
+      saved[key + '_dept'] = block.querySelector('.career-dept-input') ? block.querySelector('.career-dept-input').value : '';
+      saved[key + '_detail'] = block.querySelector('.career-detail-input') ? block.querySelector('.career-detail-input').value : '';
+    });
+
+    if (companies.length === 0) {
+      container.innerHTML = '<div style="color:#aaa;font-size:0.85rem;padding:0.75rem 0;">「学歴・職歴」セクションの職歴に会社を入力すると、ここに自動反映されます。</div>';
+      return;
+    }
+
+    container.innerHTML = companies.map(co => {
+      let dateStr = '';
+      if (co.startYear) dateStr = co.startYear + '年' + (co.startMonth ? co.startMonth + '月' : '') + '〜';
+      if (co.endStatus === '退社' && co.endYear) dateStr += co.endYear + '年' + (co.endMonth ? co.endMonth + '月' : '');
+      else if (co.endStatus === '在籍中') dateStr += '現在';
+
+      const escapedKey = co.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+      const dept = (saved[co.name + '_dept'] || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      const detail = (saved[co.name + '_detail'] || '').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+      return '<div class="sub-section career-co-block" data-company="' + escapedKey + '">' +
+        '<div class="sub-section-label">' + esc(co.name) +
+          '<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--gray-500);margin-left:8px;">' + esc(dateStr) + '</span>' +
+        '</div>' +
+        '<div class="form-row" style="margin-bottom:0.5rem;">' +
+          '<label>部署・役職</label>' +
+          '<input type="text" class="career-dept-input" placeholder="営業部 係長" value="' + dept + '">' +
+        '</div>' +
+        '<div class="form-row">' +
+          '<label>業務内容</label>' +
+          '<textarea class="career-detail-input" rows="4" placeholder="担当業務・実績・使用ツールなどを記入してください">' + detail + '</textarea>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    container.querySelectorAll('input, textarea').forEach(el => {
+      el.addEventListener('input', saveToStorage);
+    });
+  }
+
+  // ===== Collect career details from Section 6 blocks =====
+  function collectCareerDetails() {
+    const details = {};
+    document.querySelectorAll('#careerCompanyBlocks .career-co-block').forEach(block => {
+      const key = block.dataset.company;
+      if (!key) return;
+      details[key] = {
+        dept: block.querySelector('.career-dept-input') ? block.querySelector('.career-dept-input').value : '',
+        detail: block.querySelector('.career-detail-input') ? block.querySelector('.career-detail-input').value : ''
+      };
+    });
+    return details;
+  }
+
+  // ===== Qual Table =====
+  let qualRowCounter = 0;
+
+  function createQualRow(year, month, category, name) {
+    const id = ++qualRowCounter;
+    const tr = document.createElement('tr');
+    tr.dataset.id = id;
+    tr.innerHTML = `
+      <td class="col-year">
+        <input type="number" id="qualYear_${id}" name="qualYear_${id}"
+          value="${year || ''}" min="1950" max="2099" placeholder="年">
+      </td>
+      <td class="col-month">
+        <select id="qualMonth_${id}" name="qualMonth_${id}" aria-label="月">
+          ${monthOptions(month)}
+        </select>
+      </td>
+      <td class="col-qual">
+        <select id="qualCat_${id}" name="qualCat_${id}" aria-label="区分">
+          <option value="取得"${(!category || category === '取得') ? ' selected' : ''}>取得</option>
+          <option value="合格"${category === '合格' ? ' selected' : ''}>合格</option>
+          <option value="修了"${category === '修了' ? ' selected' : ''}>修了</option>
+        </select>
+      </td>
+      <td class="col-content" style="display:flex;gap:4px;align-items:center;">
+        <input type="text" id="qualName_${id}" name="qualName_${id}"
+          value="${name || ''}" placeholder="資格・免許名" style="flex:1;">
+        <button type="button" class="btn btn-outline qual-picker-btn" onclick="openQualPicker(${id})">リストから選択</button>
+      </td>
+      <td class="col-action">
+        <button class="btn btn-danger" onclick="removeRow('qualBody', this)" aria-label="この行を削除">×</button>
+      </td>
+    `;
+    return tr;
+  }
+
+  function addQualRow() {
+    document.getElementById('qualBody').appendChild(createQualRow());
+  }
+
+  // ===== Qualification picker (category -> real license/qualification list) =====
+  const QUAL_CATEGORIES = {
+    '各種運転免許': [
+      '普通自動車第一種運転免許', '普通自動車第二種運転免許', '準中型自動車免許',
+      '中型自動車免許', '大型自動車免許', '大型自動車第二種免許',
+      '普通自動二輪車免許', '大型自動二輪車免許', '原動機付自転車免許',
+      '大型特殊自動車免許', 'けん引免許', 'フォークリフト運転技能講習修了証'
+    ],
+    '販売・サービス系': [
+      '販売士検定（リテールマーケティング検定）', 'サービス接遇検定', '秘書検定',
+      '調理師免許', '美容師免許', '理容師免許', 'ネイリスト技能検定',
+      'レストランサービス技能検定'
+    ],
+    '語学・教員・事務系': [
+      '実用英語技能検定（英検）', 'TOEIC L&Rテスト', 'TOEFL iBT',
+      '中国語検定試験', '日本語教育能力検定試験', '教員免許（中学校・高等学校）',
+      '日商簿記検定', 'MOS（Microsoft Office Specialist）', '秘書検定'
+    ],
+    '医療・福祉・栄養調理系': [
+      '看護師免許', '准看護師免許', '介護福祉士', '介護職員初任者研修',
+      '実務者研修（介護福祉士実務者研修）', '社会福祉士', '精神保健福祉士',
+      '栄養士免許', '管理栄養士', '調理師免許', '保育士'
+    ],
+    '財務会計・経営・金融・法務系': [
+      '日商簿記検定', '税理士', '公認会計士', 'ファイナンシャルプランナー（FP技能検定）',
+      '中小企業診断士', '行政書士', '社会保険労務士', '宅地建物取引士'
+    ],
+    'IT・通信系': [
+      'ITパスポート試験', '基本情報技術者試験', '応用情報技術者試験',
+      '情報セキュリティマネジメント試験', 'MOS（Microsoft Office Specialist）',
+      'CCNA', 'Javaプログラミング能力認定試験'
+    ],
+    '工業・整備士系': [
+      '自動車整備士1級', '自動車整備士2級', '自動車整備士3級',
+      '電気工事士第一種', '電気工事士第二種',
+      '危険物取扱者甲種', '危険物取扱者乙種', '危険物取扱者丙種',
+      'ボイラー技士', 'フォークリフト運転技能講習修了証', '溶接技能者'
+    ],
+    '土木・建築・不動産系': [
+      '宅地建物取引士', '建築士一級', '建築士二級',
+      '施工管理技士（建築）', '施工管理技士（土木）', '施工管理技士（電気工事）',
+      '測量士', '測量士補', 'マンション管理士', '賃貸不動産経営管理士'
+    ]
+  };
+
+  let qualPickerTargetId = null;
+
+  function openQualPicker(id) {
+    qualPickerTargetId = id;
+    document.getElementById('qualPickerOverlay').classList.add('open');
+    showQualCategoryList();
+  }
+
+  function closeQualPicker() {
+    document.getElementById('qualPickerOverlay').classList.remove('open');
+    qualPickerTargetId = null;
+  }
+
+  function showQualCategoryList() {
+    document.getElementById('qualPickerTitle').textContent = 'カテゴリ';
+    document.getElementById('qualPickerBack').classList.remove('show');
+    const list = document.getElementById('qualPickerList');
+    list.innerHTML = Object.keys(QUAL_CATEGORIES).map(cat =>
+      `<button type="button" class="qual-picker-item" onclick="showQualItemList('${esc(cat).replace(/'/g, "\\'")}')">${esc(cat)}</button>`
+    ).join('');
+  }
+
+  function showQualItemList(category) {
+    document.getElementById('qualPickerTitle').textContent = category;
+    document.getElementById('qualPickerBack').classList.add('show');
+    const items = QUAL_CATEGORIES[category] || [];
+    const list = document.getElementById('qualPickerList');
+    list.innerHTML = items.length
+      ? items.map(name =>
+          `<button type="button" class="qual-picker-item" onclick="selectQualItem('${esc(name).replace(/'/g, "\\'")}')">${esc(name)}</button>`
+        ).join('')
+      : '<div class="qual-picker-empty">項目がありません</div>';
+  }
+
+  function selectQualItem(name) {
+    if (qualPickerTargetId != null) {
+      const input = document.getElementById('qualName_' + qualPickerTargetId);
+      if (input) {
+        input.value = name;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    closeQualPicker();
+  }
+
+  // ===== Shared helpers =====
+  function monthOptions(selected) {
+    let html = '<option value="">月</option>';
+    for (let m = 1; m <= 12; m++) {
+      const sel = (selected && parseInt(selected) === m) ? ' selected' : '';
+      html += `<option value="${m}"${sel}>${m}</option>`;
+    }
+    return html;
+  }
+
+  function removeRow(tbodyId, btn) {
+    const row = btn.closest('tr');
+    row.parentNode.removeChild(row);
+  }
+
+  // ===== Initialize default rows =====
+  (function init() {
+    addGakurekiRow();
+    addGakurekiRow();
+    addShokurekiRow();
+    addShokurekiRow();
+    addQualRow();
+    addQualRow();
+  })();
+
+  // ===== Utility: "※ 有・無" with a circle drawn around the selected one =====
+  function yesNoMark(value) {
+    const yesCls = value === '有' ? ' class="yn-circle"' : '';
+    const noCls = value === '無' ? ' class="yn-circle"' : '';
+    return `<span class="yn-mark">※</span> <span${yesCls}>有</span>・<span${noCls}>無</span>`;
+  }
+
+  // ===== Utility: escape HTML =====
+  function esc(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ===== Utility: 西暦→和暦変換 =====
+  function seireki2wareki(year) {
+    const y = parseInt(year);
+    if (!y) return '';
+    if (y >= 2019) return '令和' + (y - 2018);
+    if (y >= 1989) return '平成' + (y - 1988);
+    if (y >= 1926) return '昭和' + (y - 1925);
+    if (y >= 1912) return '大正' + (y - 1911);
+    return String(y);
+  }
+
+  // ===== Utility: today in Japanese wareki format =====
+  function todayJapanese() {
+    const d = new Date();
+    return `${seireki2wareki(d.getFullYear())}年${d.getMonth()+1}月${d.getDate()}日`;
+  }
+
+  // ===== Collect form data =====
+  function collectFormData() {
+    // Get selected radio value
+    function radio(name) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : '';
+    }
+    // Get checked checkboxes
+    function checks(name) {
+      return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+        .map(el => el.value).join('・');
+    }
+
+    // Birth info
+    const birthYear = document.getElementById('birthYear').value;
+    const birthMonth = document.getElementById('birthMonth').value;
+    const birthDay = document.getElementById('birthDay').value;
+    let birthStr = '';
+    if (birthYear && birthMonth && birthDay) {
+      birthStr = `${seireki2wareki(birthYear)}年${birthMonth}月${birthDay}日`;
+    }
+    const ageVal = document.getElementById('ageValue').textContent;
+    const ageStr = ageVal !== '—' ? `満${ageVal}歳` : '';
+
+    // History rows（学歴→職歴の順で結合）
+    function collectRows(tbodyId, sectionLabel) {
+      const rows = [{ type: 'heading', label: sectionLabel }];
+      document.querySelectorAll(`#${tbodyId} tr`).forEach(tr => {
+        const yearInput = tr.querySelector('input[type="number"]');
+        const selects = tr.querySelectorAll('select');
+        const textInput = tr.querySelector('input[type="text"]');
+        const monthVal = selects[0] ? selects[0].value : '';
+        const statusVal = selects[1] ? selects[1].value : '';
+        const nameVal = textInput ? textInput.value : '';
+        const content = nameVal && statusVal ? `${nameVal}　${statusVal}` : (nameVal || statusVal);
+        rows.push({ type: 'entry', year: seireki2wareki(yearInput ? yearInput.value : ''), month: monthVal, content });
+      });
+      return rows;
+    }
+    const historyRows = [
+      ...collectRows('gakurekiBody', '学歴'),
+      ...collectRows('shokurekiBody', '職歴')
+    ];
+
+    // Qual rows
+    const qualRows = [];
+    const qualBodyRows = document.querySelectorAll('#qualBody tr');
+    qualBodyRows.forEach(tr => {
+      const inputs = tr.querySelectorAll('input[type="number"], select, input[type="text"]');
+      if (inputs.length >= 4) {
+        qualRows.push({
+          year: seireki2wareki(inputs[0].value),
+          month: inputs[1].value,
+          category: inputs[2].value,
+          name: inputs[3].value
+        });
+      }
+    });
+
+    return {
+      name: document.getElementById('name').value,
+      kana: document.getElementById('kana').value,
+      birthStr,
+      ageStr,
+      gender: radio('gender'),
+      postal: document.getElementById('postal').value,
+      address: document.getElementById('address').value,
+      addressKana: document.getElementById('addressKana').value,
+      phone: document.getElementById('phone').value,
+      mobile: document.getElementById('mobile').value,
+      email: document.getElementById('email').value,
+      contactPostal: document.getElementById('contactPostal').value,
+      contactAddress: document.getElementById('contactAddress').value,
+      contactPhone: document.getElementById('contactPhone').value,
+      sameAddress: document.getElementById('sameAddress').checked,
+      historyRows,
+      qualRows,
+      shokurekiRows: Array.from(document.querySelectorAll('#shokurekiBody tr')).map(tr => {
+        const yearInput = tr.querySelector('input[type="number"]');
+        const selects = tr.querySelectorAll('select');
+        const textInput = tr.querySelector('input[type="text"]');
+        return {
+          year: yearInput ? yearInput.value : '',
+          month: selects[0] ? selects[0].value : '',
+          name: textInput ? textInput.value : '',
+          status: selects[1] ? selects[1].value : ''
+        };
+      }),
+      motivation: document.getElementById('motivation').value,
+      commuteHour: document.getElementById('commuteHour').value,
+      commuteMin: document.getElementById('commuteMin').value,
+      commuteMethod: document.getElementById('commuteMethod').value,
+      dependents: document.getElementById('dependents').value,
+      spouse: radio('spouse'),
+      spouseDependent: radio('spouseDependent'),
+      workHours: checks('workHours'),
+      personalRequest: document.getElementById('personalRequest').value,
+      careerSummary: document.getElementById('careerSummary').value,
+      careerDetails: collectCareerDetails(),
+      skillsText: document.getElementById('skillsText').value,
+      photoDataUrl
+    };
+  }
+
+  // ===== Build history table rows HTML (for resume left page) =====
+  // Renders ALL history rows (no splitting). Pads with empty rows to fill space.
+  function buildHistoryTableRows(historyRows) {
+    let html = '';
+
+    for (const row of historyRows) {
+      if (row.type === 'heading') {
+        html += `<tr class="heading-row"><td colspan="3">${esc(row.label)}</td></tr>`;
+      } else {
+        html += `<tr>
+          <td class="col-year" style="text-align:center;">${esc(row.year)}</td>
+          <td class="col-month" style="text-align:center;">${esc(row.month)}</td>
+          <td class="col-content">${esc(row.content)}</td>
+        </tr>`;
+      }
+    }
+
+    // Reference form has 15 data rows under the header
+    const MIN_ROWS = 15;
+    const currentCount = (html.match(/<tr/g) || []).length;
+    for (let i = currentCount; i < MIN_ROWS; i++) {
+      html += `<tr class="empty-row"><td class="col-year">&nbsp;</td><td class="col-month">&nbsp;</td><td class="col-content">&nbsp;</td></tr>`;
+    }
+    return html;
+  }
+
+  // ===== Build right page history continuation (fixed empty rows) =====
+  function buildHistoryContinuationRows() {
+    let html = '';
+    const CONTINUATION_ROWS = 5;
+    for (let i = 0; i < CONTINUATION_ROWS; i++) {
+      html += `<tr class="empty-row"><td class="col-year">&nbsp;</td><td class="col-month">&nbsp;</td><td class="col-content">&nbsp;</td></tr>`;
+    }
+    return html;
+  }
+
+  // ===== Render Resume (履歴書) =====
+  function renderResume(data) {
+    const today = todayJapanese();
+
+    // Commute time string
+    let commuteStr = '';
+    if (data.commuteHour || data.commuteMin) {
+      commuteStr = `${data.commuteHour || '0'}時間${data.commuteMin || '0'}分`;
+      if (data.commuteMethod) commuteStr += '　' + data.commuteMethod;
+    }
+
+    // Contact address block
+    let contactAddrStr = '';
+    if (data.sameAddress) {
+      contactAddrStr = '現住所に同じ';
+    } else if (data.contactAddress) {
+      const cPostal = data.contactPostal ? `〒${data.contactPostal}　` : '';
+      contactAddrStr = `${cPostal}${data.contactAddress}`;
+    }
+
+    // Build qual table rows
+    let qualRowsHtml = '';
+    const filledQuals = data.qualRows.filter(r => r.year || r.month || r.name);
+    filledQuals.forEach(r => {
+      qualRowsHtml += `<tr>
+        <td class="col-year" style="text-align:center;">${esc(r.year)}</td>
+        <td class="col-month" style="text-align:center;">${esc(r.month)}</td>
+        <td>${esc(r.name)}</td>
+      </tr>`;
+    });
+    const qualMinRows = 6;
+    for (let i = filledQuals.length; i < qualMinRows; i++) {
+      qualRowsHtml += `<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>`;
+    }
+
+    const html = `
+      <div class="resume-pages">
+        <!-- LEFT PAGE -->
+        <div class="resume-page-left">
+          <!-- Title + date -->
+          <div class="resume-title-row">
+            <div class="resume-title">履　歴　書</div>
+            <div class="resume-date-area">${esc(today)}現在</div>
+          </div>
+
+          <!-- Photo + name block -->
+          <div class="resume-name-photo-row">
+            <div class="resume-name-block">
+              <table class="resume-field-table" style="margin-bottom:0;">
+                <tr>
+                  <td class="label-cell kana-cell" style="width:36px;">ふりがな</td>
+                  <td class="kana-cell value-cell">${esc(data.kana)}</td>
+                </tr>
+                <tr>
+                  <td class="label-cell" style="width:36px;">氏名</td>
+                  <td class="name-cell value-cell">${esc(data.name)}</td>
+                </tr>
+                <tr>
+                  <td class="label-cell birth-row-cell" style="width:36px; white-space:normal;">生年月日</td>
+                  <td class="value-cell birth-row-cell">${esc(data.birthStr)}　${esc(data.ageStr)}　性別：${esc(data.gender) || '—'}</td>
+                </tr>
+              </table>
+            </div>
+            <!-- Photo box -->
+            <div class="resume-photo-box">
+              ${data.photoDataUrl
+                ? `<img src="${data.photoDataUrl}" alt="顔写真" style="display:block;">`
+                : `<div class="resume-photo-placeholder">写真<br>縦36〜40mm<br>横24〜30mm<br>3ヶ月以内</div>`
+              }
+            </div>
+          </div>
+
+          <!-- Address block -->
+          <table class="resume-field-table" style="margin-bottom:3px;">
+            <tr>
+              <td class="label-cell addr-row-a" style="white-space:normal;">ふりがな</td>
+              <td class="value-cell addr-row-a">${esc(data.addressKana)}</td>
+              <td class="label-cell addr-row-a" style="white-space:normal;">電話番号</td>
+              <td class="value-cell addr-row-a" style="white-space:nowrap;">${esc(data.phone)}</td>
+            </tr>
+            <tr>
+              <td class="label-cell addr-row-a2" style="white-space:normal;">現住所</td>
+              <td class="value-cell addr-row-a2">
+                ${data.postal ? `〒${esc(data.postal)}　` : ''}${esc(data.address)}
+              </td>
+              <td class="label-cell addr-row-a2" style="white-space:normal;">携帯</td>
+              <td class="value-cell addr-row-a2" style="white-space:nowrap;">${esc(data.mobile)}</td>
+            </tr>
+            <tr>
+              <td class="label-cell addr-row-b" style="white-space:normal;">メール</td>
+              <td class="value-cell addr-row-b" colspan="3">${esc(data.email)}</td>
+            </tr>
+            <tr>
+              <td class="label-cell addr-row-c" style="white-space:normal;">ふりがな</td>
+              <td class="value-cell addr-row-c" colspan="3">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="label-cell addr-row-d" style="white-space:normal;">連絡先</td>
+              <td class="value-cell addr-row-d" colspan="3">${esc(contactAddrStr)}</td>
+            </tr>
+          </table>
+
+          <!-- History table (all rows on left page) -->
+          <table class="resume-history-table" id="resumeMainHistoryTable">
+            <thead>
+              <tr>
+                <th class="col-year">年</th>
+                <th class="col-month">月</th>
+                <th class="col-content">学 歴 ・ 職 歴（バイト歴）</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${buildHistoryTableRows(data.historyRows)}
+            </tbody>
+          </table>
+
+          <!-- Footnote (matches the reference form's bottom-left note) -->
+          <div class="resume-footnote" id="resumeFootnote">
+            <div class="resume-footnote-line">
+              <span class="resume-footnote-label">記入について</span>
+              <span>1. 鉛筆以外の黒または青の筆記具で記入。　2. 数字はアラビア数字で、文字はくずさず正確に書く。</span>
+            </div>
+            <div class="resume-footnote-line">
+              <span class="resume-footnote-label" style="visibility:hidden;">記入について</span>
+              <span>3. 「性別」欄：記載は任意。未記載とすることも可能。　4. ※印のところは、該当するものを〇で囲む。</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT PAGE -->
+        <div class="resume-page-right">
+          <!-- History continuation (fixed empty rows for overflow use) -->
+          <table class="resume-history-table" style="margin-bottom:4px;">
+            <thead>
+              <tr>
+                <th class="col-year">年</th>
+                <th class="col-month">月</th>
+                <th class="col-content">学 歴 ・ 職 歴（続き）</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${buildHistoryContinuationRows()}
+            </tbody>
+          </table>
+
+          <!-- Qualifications -->
+          <div class="resume-section-title">資格・免許</div>
+          <table class="resume-qual-table" style="margin-bottom:4px;">
+            <thead>
+              <tr>
+                <th class="col-year">年</th>
+                <th class="col-month">月</th>
+                <th>資格・免許名</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${qualRowsHtml}
+            </tbody>
+          </table>
+
+          <!-- Motivation + Commute/Family (label-over-value layout) -->
+          <div class="mc-wrap">
+            <div class="mc-motivation">
+              <div class="motivation-label">志望動機・自己PR</div>
+              <div class="motivation-text">${esc(data.motivation)}</div>
+            </div>
+            <div class="mc-right-col">
+              <div class="mc-section">
+                <div class="mc-label">通勤時間・通勤方法</div>
+                <div class="mc-value">${esc(commuteStr)}</div>
+              </div>
+              <div class="mc-section">
+                <div class="mc-label">扶養家族（配偶者を除く）</div>
+                <div class="mc-value">${data.dependents !== '' ? esc(data.dependents) + '名' : ''}</div>
+              </div>
+              <div class="mc-section mc-spouse-row">
+                <div class="mc-spouse-col">
+                  <div class="mc-label">配偶者</div>
+                  <div class="mc-value">${yesNoMark(data.spouse)}</div>
+                </div>
+                <div class="mc-spouse-col">
+                  <div class="mc-label">配偶者の扶養義務</div>
+                  <div class="mc-value">${yesNoMark(data.spouseDependent)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Work hours -->
+          <div class="resume-section-title" style="margin-top:3px;">勤務可能時間帯</div>
+          <div class="resume-worktype-box">${esc(data.workHours)}</div>
+
+          <!-- Personal request -->
+          <div class="resume-section-title">本人希望欄（特に給料・職種・勤務時間・その他についての希望）</div>
+          <div class="resume-request-box">${esc(data.personalRequest)}</div>
+        </div>
+      </div>
+    `;
+
+    return html;
+  }
+
+  // ===== Render Career Document (職務経歴書) =====
+  function renderCareer(data) {
+    const today = todayJapanese();
+    const nameStr = data.name || '　　　　';
+
+    // Employer sections from shokurekiRows (newest first)
+    const coList = parseShokurekiRows(data.shokurekiRows || []);
+    let employerSection = '';
+    if (coList.length > 0) {
+      const details = data.careerDetails || {};
+      employerSection = coList.map(co => {
+        let dateStr = '';
+        if (co.startYear) dateStr = co.startYear + '年' + (co.startMonth ? co.startMonth + '月' : '') + '〜';
+        if (co.endStatus === '退社' && co.endYear) dateStr += co.endYear + '年' + (co.endMonth ? co.endMonth + '月' : '');
+        else if (co.endStatus === '在籍中') dateStr += '現在';
+        const d = details[co.name] || {};
+        let titleLine = esc(co.name);
+        if (dateStr) titleLine += '　' + esc(dateStr);
+        if (d.dept) titleLine += '　' + esc(d.dept);
+        return `<div class="career-employer-title">${titleLine}</div>
+        <div class="career-body-text">${esc(d.detail || '') || '　'}</div>`;
+      }).join('');
+    }
+
+    // Qualifications from section 4
+    const qualLines = data.qualRows
+      .filter(r => r.name)
+      .map(r => {
+        let line = '';
+        if (r.year && r.month) line += `${r.year}年${r.month}月　`;
+        line += `${r.name}　${r.category}`;
+        return line;
+      }).join('\n');
+
+    const skillsCombined = [qualLines, data.skillsText].filter(Boolean).join('\n');
+
+    return `
+      <div class="career-header">
+        <div class="career-title">職務経歴書</div>
+      </div>
+      <div class="career-meta">
+        ${esc(today)}現在<br>
+        氏名：${esc(nameStr)}
+      </div>
+
+      <div class="career-section">
+        <div class="career-section-title">職務要約</div>
+        <div class="career-body-text">${esc(data.careerSummary) || '（未入力）'}</div>
+      </div>
+
+      <div class="career-section">
+        <div class="career-section-title">職務経歴詳細</div>
+        ${employerSection || '<div class="career-body-text">（未入力）</div>'}
+      </div>
+
+      <div class="career-section">
+        <div class="career-section-title">保有資格・スキル</div>
+        <div class="career-body-text">${esc(skillsCombined) || '（未入力）'}</div>
+      </div>
+
+      <div class="career-closing">以上</div>
+    `;
+  }
+
+  // ===== Scale document to fit viewport =====
+  function scaleDocument(wrapperEl, docEl) {
+    const viewportWidth = document.getElementById('previewViewport').clientWidth - 64; // 2rem padding each side
+    const docWidth = docEl.offsetWidth;
+    if (docWidth > 0 && viewportWidth > 0) {
+      const scale = Math.min(1, viewportWidth / docWidth);
+      // Transform is applied to docEl (not wrapperEl) so the wrapper's own
+      // resize below isn't scaled a second time by its own transform —
+      // that double-scaling was cropping/misaligning the right and bottom
+      // edges of the page borders in the on-screen preview.
+      docEl.style.transform = `scale(${scale})`;
+      docEl.style.transformOrigin = 'top left';
+      // Set wrapper width to scaled document width to prevent horizontal scroll
+      wrapperEl.style.width = (docWidth * scale) + 'px';
+      // Adjust wrapper height to prevent empty space below
+      wrapperEl.style.height = (docEl.offsetHeight * scale) + 'px';
+    }
+  }
+
+  // ===== Pad left-page history table with blank rows down to the page bottom =====
+  function fillHistoryTableToPageBottom() {
+    const page = document.querySelector('.resume-page-left');
+    const table = document.getElementById('resumeMainHistoryTable');
+    if (!page || !table) return;
+    const tbody = table.querySelector('tbody');
+    const pageStyle = getComputedStyle(page);
+    const pageBottom = page.getBoundingClientRect().bottom - parseFloat(pageStyle.paddingBottom);
+    const tableBottom = table.getBoundingClientRect().bottom;
+    const footnote = document.getElementById('resumeFootnote');
+    const reserved = footnote ? footnote.getBoundingClientRect().height : 0;
+    const leftover = pageBottom - tableBottom - reserved;
+    const sampleRow = tbody.querySelector('tr.empty-row') || tbody.lastElementChild;
+    const rowHeight = sampleRow ? sampleRow.getBoundingClientRect().height : 23;
+    if (leftover > rowHeight * 0.5 && rowHeight > 0) {
+      const rowsToAdd = Math.floor(leftover / rowHeight);
+      for (let i = 0; i < rowsToAdd; i++) {
+        const tr = document.createElement('tr');
+        tr.className = 'empty-row';
+        tr.innerHTML = '<td class="col-year">&nbsp;</td><td class="col-month">&nbsp;</td><td class="col-content">&nbsp;</td>';
+        tbody.appendChild(tr);
+      }
+    }
+  }
+
+  // ===== Update preview =====
+  function updatePreview() {
+    const data = collectFormData();
+
+    // Render resume
+    const resumeDoc = document.getElementById('resumeDoc');
+    resumeDoc.innerHTML = renderResume(data);
+    document.getElementById('resumeEmptyMsg').style.display = 'none';
+    const resumeWrapper = document.getElementById('resumeDocWrapper');
+    resumeWrapper.style.display = 'block';
+    fillHistoryTableToPageBottom();
+
+    // Render career
+    const careerDoc = document.getElementById('careerDoc');
+    careerDoc.innerHTML = renderCareer(data);
+    document.getElementById('careerEmptyMsg').style.display = 'none';
+    const careerWrapper = document.getElementById('careerDocWrapper');
+    careerWrapper.style.display = 'block';
+
+    // Apply photo to resume preview
+    const previewPhotoImg = resumeDoc.querySelector('.resume-photo-box img');
+    if (previewPhotoImg && data.photoDataUrl) {
+      previewPhotoImg.style.display = 'block';
+    }
+
+    // Scale after render (use timeout to let layout settle)
+    setTimeout(() => {
+      if (currentTab === 'resume') {
+        scaleDocument(resumeWrapper, resumeDoc);
+      } else {
+        scaleDocument(careerWrapper, careerDoc);
+      }
+    }, 50);
+  }
+
+  // ===== Tab switching =====
+  let currentTab = 'resume';
+
+  function switchPreviewTab(tab) {
+    currentTab = tab;
+    document.getElementById('tabResume').classList.toggle('active', tab === 'resume');
+    document.getElementById('tabCareer').classList.toggle('active', tab === 'career');
+    document.getElementById('resumePreviewContent').style.display = tab === 'resume' ? 'block' : 'none';
+    document.getElementById('careerPreviewContent').style.display = tab === 'career' ? 'block' : 'none';
+
+    // Re-scale on tab switch
+    setTimeout(() => {
+      if (tab === 'resume') {
+        const w = document.getElementById('resumeDocWrapper');
+        const d = document.getElementById('resumeDoc');
+        if (w.style.display !== 'none') scaleDocument(w, d);
+      } else {
+        const w = document.getElementById('careerDocWrapper');
+        const d = document.getElementById('careerDoc');
+        if (w.style.display !== 'none') scaleDocument(w, d);
+      }
+    }, 50);
+  }
+
+  // ===== Re-scale on window resize =====
+  window.addEventListener('resize', () => {
+    const rw = document.getElementById('resumeDocWrapper');
+    const rd = document.getElementById('resumeDoc');
+    const cw = document.getElementById('careerDocWrapper');
+    const cd = document.getElementById('careerDoc');
+    if (rw.style.display !== 'none') scaleDocument(rw, rd);
+    if (cw.style.display !== 'none') scaleDocument(cw, cd);
+  });
+
+  // ===== localStorage persistence =====
+  const STORAGE_KEY = 'resume-tool-data-v1';
+
+  // Collect raw form field values (not the rendered data, but the raw inputs)
+  function collectRawFormData() {
+    function radio(name) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : '';
+    }
+    function checks(name) {
+      return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+        .map(el => el.value);
+    }
+
+    // Collect history table rows（学歴・職歴別々に保存）
+    function collectTableRows(tbodyId) {
+      const rows = [];
+      document.querySelectorAll(`#${tbodyId} tr`).forEach(tr => {
+        const yearInput = tr.querySelector('input[type="number"]');
+        const selects = tr.querySelectorAll('select');
+        const textInput = tr.querySelector('input[type="text"]');
+        rows.push({
+          type: 'entry',
+          year: yearInput ? yearInput.value : '',
+          month: selects[0] ? selects[0].value : '',
+          name: textInput ? textInput.value : '',
+          status: selects[1] ? selects[1].value : ''
+        });
+      });
+      return rows;
+    }
+    const gakurekiRows = collectTableRows('gakurekiBody');
+    const shokurekiRows = collectTableRows('shokurekiBody');
+    const historyRows = []; // 後方互換のため残す
+
+    // Collect qual table rows
+    const qualRows = [];
+    document.querySelectorAll('#qualBody tr').forEach(tr => {
+      const yearInput = tr.querySelector('input[type="number"]');
+      const selects = tr.querySelectorAll('select');
+      const contentInput = tr.querySelector('input[type="text"]');
+      if (yearInput) {
+        qualRows.push({
+          year: yearInput.value,
+          month: selects[0] ? selects[0].value : '',
+          category: selects[1] ? selects[1].value : '取得',
+          name: contentInput ? contentInput.value : ''
+        });
+      }
+    });
+
+    return {
+      name: document.getElementById('name').value,
+      kana: document.getElementById('kana').value,
+      birthYear: document.getElementById('birthYear').value,
+      birthMonth: document.getElementById('birthMonth').value,
+      birthDay: document.getElementById('birthDay').value,
+      gender: radio('gender'),
+      postal: document.getElementById('postal').value,
+      address: document.getElementById('address').value,
+      addressKana: document.getElementById('addressKana').value,
+      phone: document.getElementById('phone').value,
+      mobile: document.getElementById('mobile').value,
+      email: document.getElementById('email').value,
+      sameAddress: document.getElementById('sameAddress').checked,
+      contactPostal: document.getElementById('contactPostal').value,
+      contactAddress: document.getElementById('contactAddress').value,
+      contactPhone: document.getElementById('contactPhone').value,
+      historyRows,
+      gakurekiRows,
+      shokurekiRows,
+      qualRows,
+      motivation: document.getElementById('motivation').value,
+      commuteHour: document.getElementById('commuteHour').value,
+      commuteMin: document.getElementById('commuteMin').value,
+      commuteMethod: document.getElementById('commuteMethod').value,
+      dependents: document.getElementById('dependents').value,
+      spouse: radio('spouse'),
+      spouseDependent: radio('spouseDependent'),
+      workHours: checks('workHours'),
+      personalRequest: document.getElementById('personalRequest').value,
+      careerSummary: document.getElementById('careerSummary').value,
+      careerDetails: collectCareerDetails(),
+      skillsText: document.getElementById('skillsText').value
+      // NOTE: photoDataUrl is intentionally excluded (large dataURL)
+    };
+  }
+
+  // Save to localStorage
+  let saveTimer = null;
+  function saveToStorage() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try {
+        const data = collectRawFormData();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        // Show save indicator briefly
+        const indicator = document.getElementById('saveIndicator');
+        if (indicator) {
+          indicator.style.display = 'block';
+          setTimeout(() => { indicator.style.display = 'none'; }, 1500);
+        }
+      } catch (e) {
+        // localStorage might be full or disabled
+        console.warn('localStorage save failed:', e);
+      }
+    }, 400);
+  }
+
+  // Restore from localStorage
+  function loadFromStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+
+      // Restore simple text/select fields
+      function setField(id, value) {
+        const el = document.getElementById(id);
+        if (el && value !== undefined && value !== null) el.value = value;
+      }
+      function setRadio(name, value) {
+        if (!value) return;
+        const el = document.querySelector(`input[name="${name}"][value="${value}"]`);
+        if (el) el.checked = true;
+      }
+      function setChecks(name, values) {
+        if (!Array.isArray(values)) return;
+        document.querySelectorAll(`input[name="${name}"]`).forEach(el => {
+          el.checked = values.includes(el.value);
+        });
+      }
+
+      setField('name', data.name);
+      setField('kana', data.kana);
+      setField('birthYear', data.birthYear);
+      setField('birthMonth', data.birthMonth);
+      setField('birthDay', data.birthDay);
+      calcAge(); // recalculate age after restoring birth date
+
+      setRadio('gender', data.gender);
+      setField('postal', data.postal);
+      setField('address', data.address);
+      setField('addressKana', data.addressKana);
+      setField('phone', data.phone);
+      setField('mobile', data.mobile);
+      setField('email', data.email);
+
+      // Same address checkbox
+      if (data.sameAddress) {
+        const cb = document.getElementById('sameAddress');
+        if (cb) {
+          cb.checked = true;
+          toggleContactAddress(cb);
+        }
+      }
+      setField('contactPostal', data.contactPostal);
+      setField('contactAddress', data.contactAddress);
+      setField('contactPhone', data.contactPhone);
+
+      // Restore history tables
+      function restoreHistRows(tbodyId, rows, addFn) {
+        if (!Array.isArray(rows) || rows.length === 0) return;
+        document.getElementById(tbodyId).innerHTML = '';
+        rows.forEach(row => addFn(row.year, row.month, row.name || row.content || '', row.status || ''));
+      }
+      restoreHistRows('gakurekiBody', data.gakurekiRows, addGakurekiRow);
+      restoreHistRows('shokurekiBody', data.shokurekiRows, addShokurekiRow);
+
+      // Restore qual table
+      if (Array.isArray(data.qualRows) && data.qualRows.length > 0) {
+        const tbody = document.getElementById('qualBody');
+        tbody.innerHTML = ''; // clear default rows
+        data.qualRows.forEach(row => {
+          const tr = createQualRow(row.year, row.month, row.category, row.name);
+          tbody.appendChild(tr);
+        });
+      }
+
+      setField('motivation', data.motivation);
+      setField('commuteHour', data.commuteHour);
+      setField('commuteMin', data.commuteMin);
+      setField('commuteMethod', data.commuteMethod);
+      setField('dependents', data.dependents);
+      setRadio('spouse', data.spouse);
+      setRadio('spouseDependent', data.spouseDependent);
+      setChecks('workHours', data.workHours);
+      setField('personalRequest', data.personalRequest);
+
+      // Restore "no preference" checkbox/disabled state
+      const workHoursNoneEl = document.getElementById('workHoursNone');
+      if (workHoursNoneEl) {
+        document.querySelectorAll('input[name="workHours"]:not(#workHoursNone)').forEach(cb => {
+          cb.disabled = workHoursNoneEl.checked;
+        });
+      }
+      const personalRequestNoneEl = document.getElementById('personalRequestNone');
+      if (personalRequestNoneEl) {
+        const isNone = data.personalRequest === '特に希望はありません';
+        personalRequestNoneEl.checked = isNone;
+        document.getElementById('personalRequest').disabled = isNone;
+      }
+
+      setField('careerSummary', data.careerSummary);
+      setField('skillsText', data.skillsText);
+
+      // Sync career blocks from shokurekiRows, then restore saved details
+      syncCareerBlocks();
+      if (data.careerDetails) {
+        document.querySelectorAll('#careerCompanyBlocks .career-co-block').forEach(block => {
+          const key = block.dataset.company;
+          if (!key || !data.careerDetails[key]) return;
+          const deptEl = block.querySelector('.career-dept-input');
+          const detailEl = block.querySelector('.career-detail-input');
+          if (deptEl) deptEl.value = data.careerDetails[key].dept || '';
+          if (detailEl) detailEl.value = data.careerDetails[key].detail || '';
+        });
+      }
+
+    } catch (e) {
+      console.warn('localStorage load failed:', e);
+    }
+  }
+
+  // Attach change/input listeners for auto-save
+  function attachAutoSaveListeners() {
+    const targets = document.querySelectorAll(
+      'input[type="text"], input[type="email"], input[type="tel"], input[type="number"], ' +
+      'input[type="date"], select, textarea, input[type="radio"], input[type="checkbox"]'
+    );
+    targets.forEach(el => {
+      const evType = (el.type === 'radio' || el.type === 'checkbox') ? 'change' : 'input';
+      el.addEventListener(evType, saveToStorage);
+    });
+  }
+
+  // Also watch for dynamically added rows (use event delegation on tbody)
+  document.getElementById('gakurekiBody').addEventListener('input', saveToStorage);
+  document.getElementById('gakurekiBody').addEventListener('change', saveToStorage);
+  document.getElementById('shokurekiBody').addEventListener('input', function() { syncCareerBlocks(); saveToStorage(); });
+  document.getElementById('shokurekiBody').addEventListener('change', function() { syncCareerBlocks(); saveToStorage(); });
+  document.getElementById('qualBody').addEventListener('input', saveToStorage);
+  document.getElementById('qualBody').addEventListener('change', saveToStorage);
+
+  // ===== Reset form =====
+  function resetForm() {
+    const confirmed = confirm('入力内容をリセットしますか？この操作は元に戻せません。');
+    if (!confirmed) return;
+
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      console.warn('localStorage remove failed:', e);
+    }
+
+    // Reload to clear all state including photo
+    window.location.reload();
+  }
+
+  // ===== Print with correct page orientation =====
+  function printDocument() {
+    // Add class to body based on current tab
+    document.body.classList.remove('printing-resume', 'printing-career');
+    if (currentTab === 'resume') {
+      document.body.classList.add('printing-resume');
+    } else {
+      document.body.classList.add('printing-career');
+    }
+
+    // Inject dynamic @page rule
+    let printStyleEl = document.getElementById('dynamic-print-style');
+    if (!printStyleEl) {
+      printStyleEl = document.createElement('style');
+      printStyleEl.id = 'dynamic-print-style';
+      document.head.appendChild(printStyleEl);
+    }
+    if (currentTab === 'resume') {
+      printStyleEl.textContent = '@page { margin: 0; size: A3 landscape; }';
+    } else {
+      printStyleEl.textContent = '@page { margin: 0; size: A4 portrait; }';
+    }
+
+    window.print();
+
+    // Cleanup after print dialog closes
+    setTimeout(() => {
+      document.body.classList.remove('printing-resume', 'printing-career');
+    }, 500);
+  }
+
+  // ===== Download as PDF (via the browser's print dialog) =====
+  // No bundled PDF library is used, so this reuses the same print path as
+  // printDocument() — the exact mm-accurate layout — and just sets the
+  // document title beforehand so "Save as PDF" suggests a sensible filename.
+  function downloadPdf() {
+    const nameEl = document.getElementById('name');
+    const name = nameEl && nameEl.value.trim() ? nameEl.value.trim().replace(/\s+/g, '') : '';
+    const docLabel = currentTab === 'resume' ? '履歴書' : '職務経歴書';
+    const filename = name ? `${docLabel}_${name}` : docLabel;
+
+    const originalTitle = document.title;
+    document.title = filename;
+
+    printDocument();
+
+    setTimeout(() => {
+      document.title = originalTitle;
+    }, 1000);
+  }
+
+  // ===== Initialize: load saved data then attach listeners =====
+  // Load must happen AFTER init() which already ran and created default rows.
+  // If saved data exists, it replaces the defaults.
+  loadFromStorage();
+  attachAutoSaveListeners();
+  syncCareerBlocks();
+</script>
+</body>
+</html>
