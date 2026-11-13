@@ -3469,24 +3469,111 @@
     }, 500);
   }
 
-  // ===== Download as PDF (via the browser's print dialog) =====
-  // No bundled PDF library is used, so this reuses the same print path as
-  // printDocument() — the exact mm-accurate layout — and just sets the
-  // document title beforehand so "Save as PDF" suggests a sensible filename.
-  function downloadPdf() {
+  // ===== Download as PDF (direct file download, no print dialog) =====
+  // Renders the current preview document to an image with html2canvas and
+  // writes it into a PDF with jsPDF, then saves the file directly.
+  // Libraries are loaded on first use; if they fail, falls back to print.
+  function loadScriptOnce(src) {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+      const el = document.createElement('script');
+      el.src = src;
+      el.onload = () => resolve();
+      el.onerror = () => reject(new Error('load failed: ' + src));
+      document.head.appendChild(el);
+    });
+  }
+
+  async function downloadPdf() {
+    const btn = document.getElementById('pdfBtn');
+    const btnLabel = btn ? btn.textContent : '';
     const nameEl = document.getElementById('name');
     const name = nameEl && nameEl.value.trim() ? nameEl.value.trim().replace(/\s+/g, '') : '';
-    const docLabel = currentTab === 'resume' ? '履歴書' : '職務経歴書';
-    const filename = name ? `${docLabel}_${name}` : docLabel;
+    const isResume = currentTab === 'resume';
+    const docLabel = isResume ? '履歴書' : '職務経歴書';
+    const filename = (name ? `${docLabel}_${name}` : docLabel) + '.pdf';
 
-    const originalTitle = document.title;
-    document.title = filename;
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'PDF作成中…'; }
 
-    printDocument();
+      await Promise.all([
+        loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),
+        loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'),
+      ]);
 
-    setTimeout(() => {
-      document.title = originalTitle;
-    }, 1000);
+      // Always render from the latest form input
+      updatePreview();
+      await new Promise(r => setTimeout(r, 150));
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+
+      const docEl = document.getElementById(isResume ? 'resumeDoc' : 'careerDoc');
+
+      // Capture at full size (scale 1) regardless of the on-screen preview zoom
+      const canvas = await html2canvas(docEl, {
+        scale: 2.5,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        onclone: (clonedDoc) => {
+          const c = clonedDoc.getElementById(docEl.id);
+          c.style.transform = 'none';
+          c.style.boxShadow = 'none';
+          let p = c.parentElement;
+          while (p && p !== clonedDoc.body) {
+            p.style.overflow = 'visible';
+            if (p.classList.contains('doc-scale-wrapper')) {
+              p.style.width = 'auto';
+              p.style.height = 'auto';
+            }
+            p = p.parentElement;
+          }
+        },
+      });
+
+      const { jsPDF } = window.jspdf;
+      const pdf = isResume
+        ? new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' })
+        : new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const imgH = canvas.height * pageW / canvas.width;
+
+      if (isResume || imgH <= pageH + 1) {
+        // Single page: fit inside the page
+        const fit = Math.min(1, pageH / imgH);
+        const w = pageW * fit, h = imgH * fit;
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', (pageW - w) / 2, 0, w, h);
+      } else {
+        // Long career sheet: split into multiple A4 pages
+        const sliceHpx = Math.floor(canvas.width * pageH / pageW);
+        let y = 0, first = true;
+        while (y < canvas.height) {
+          const h = Math.min(sliceHpx, canvas.height - y);
+          const slice = document.createElement('canvas');
+          slice.width = canvas.width;
+          slice.height = h;
+          const ctx = slice.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, slice.width, slice.height);
+          ctx.drawImage(canvas, 0, y, canvas.width, h, 0, 0, canvas.width, h);
+          if (!first) pdf.addPage();
+          pdf.addImage(slice.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pageW, h * pageW / canvas.width);
+          y += h;
+          first = false;
+        }
+      }
+
+      pdf.save(filename);
+    } catch (e) {
+      console.error('PDF download failed, falling back to print:', e);
+      alert('PDFの直接ダウンロードに失敗したため、印刷画面を開きます。「送信先」を「PDFに保存」にして保存してください。');
+      const originalTitle = document.title;
+      document.title = filename.replace(/\.pdf$/, '');
+      printDocument();
+      setTimeout(() => { document.title = originalTitle; }, 1000);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = btnLabel; }
+    }
   }
 
   // ===== Initialize: load saved data then attach listeners =====
