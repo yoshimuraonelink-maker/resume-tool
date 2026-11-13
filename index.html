@@ -1913,7 +1913,8 @@
         <div class="section-body" style="gap:0.6rem;">
           <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="updatePreview()">プレビューを更新</button>
           <button class="btn btn-outline" id="printBtn" style="width:100%;justify-content:center;" onclick="printDocument()">印刷する</button>
-          <button class="btn btn-outline" id="pdfBtn" style="width:100%;justify-content:center;" onclick="downloadPdf()">PDFでダウンロード</button>
+          <button class="btn btn-outline" id="pdfBtnResume" style="width:100%;justify-content:center;" onclick="downloadPdf('resume')">履歴書をPDFでダウンロード</button>
+          <button class="btn btn-outline" id="pdfBtnCareer" style="width:100%;justify-content:center;" onclick="downloadPdf('career')">職務経歴書をPDFでダウンロード</button>
           <button class="btn" id="resetBtn" style="width:100%;justify-content:center;background:#fff5f5;color:var(--danger);border:1px solid #fca5a5;" onclick="resetForm()">入力をリセット</button>
           <p style="font-size:0.72rem;color:var(--gray-500);margin-top:0.25rem;line-height:1.7;">
             フォームを入力後「プレビューを更新」で確認できます。下部のプレビューエリアで履歴書・職務経歴書を切り替えられます。入力内容は自動保存されます。
@@ -3484,17 +3485,24 @@
     });
   }
 
-  async function downloadPdf() {
-    const btn = document.getElementById('pdfBtn');
+  async function downloadPdf(type) {
+    const target = type === 'career' ? 'career' : 'resume';
+    const isResume = target === 'resume';
+    const btn = document.getElementById(isResume ? 'pdfBtnResume' : 'pdfBtnCareer');
     const btnLabel = btn ? btn.textContent : '';
+    const otherBtn = document.getElementById(isResume ? 'pdfBtnCareer' : 'pdfBtnResume');
     const nameEl = document.getElementById('name');
     const name = nameEl && nameEl.value.trim() ? nameEl.value.trim().replace(/\s+/g, '') : '';
-    const isResume = currentTab === 'resume';
+    // The non-active preview tab is display:none and cannot be captured,
+    // so temporarily switch to the target tab and restore it afterwards.
+    const prevTab = currentTab;
+    if (currentTab !== target) switchPreviewTab(target);
     const docLabel = isResume ? '履歴書' : '職務経歴書';
     const filename = (name ? `${docLabel}_${name}` : docLabel) + '.pdf';
 
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'PDF作成中…'; }
+      if (otherBtn) otherBtn.disabled = true;
 
       await Promise.all([
         loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),
@@ -3573,6 +3581,8 @@
       setTimeout(() => { document.title = originalTitle; }, 1000);
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = btnLabel; }
+      if (otherBtn) otherBtn.disabled = false;
+      if (currentTab !== prevTab) switchPreviewTab(prevTab);
     }
   }
 
