@@ -464,6 +464,39 @@
       flex-shrink: 0;
     }
 
+    /* ===== Info Note ===== */
+    .info-note {
+      display: flex;
+      gap: 0.55rem;
+      align-items: flex-start;
+      background: #eef4fb;
+      border: 1px solid #d3e2f4;
+      border-radius: var(--radius);
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.8rem;
+      line-height: 1.65;
+      color: var(--gray-700);
+    }
+    .info-note .info-icon {
+      flex-shrink: 0;
+      width: 1.1rem;
+      height: 1.1rem;
+      margin-top: 0.15rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 0.7rem;
+      font-weight: 700;
+      line-height: 1.1rem;
+      text-align: center;
+      font-family: Georgia, serif;
+    }
+    .info-note strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
     /* ===== Fieldset sub-section ===== */
     .sub-section {
       border-top: 1px solid var(--gray-200);
@@ -1761,8 +1794,9 @@
           <h2>資格・免許</h2>
         </div>
         <div class="section-body">
-          <div style="background:#fff8e1;border-left:4px solid #f5a623;padding:0.6rem 0.8rem;margin-bottom:0.9rem;font-size:0.85rem;color:#5a4a1a;border-radius:4px;">
-            ℹ️ ここで入力した資格・免許は、職務経歴書の「保有資格・スキル」に<strong>自動で転記されます</strong>。職務経歴書側での再入力は不要です。
+          <div class="info-note">
+            <span class="info-icon">i</span>
+            <span>ここで入力した資格・免許は、職務経歴書の「保有資格・スキル」に<strong>自動で転記</strong>されます。職務経歴書での再入力は不要です。</span>
           </div>
           <div class="dynamic-table-wrap">
             <table class="dynamic-table" id="qualTable">
@@ -1896,10 +1930,11 @@
 
           <div class="sub-section">
             <div class="sub-section-label">保有資格・スキル</div>
+            <div class="info-note">
+              <span class="info-icon">i</span>
+              <span>履歴書の「資格・免許」の内容は<strong>自動で転記</strong>されます（再入力不要）。ここにはPCスキル・語学など、それ以外のスキルのみ入力してください。</span>
+            </div>
             <div class="form-row">
-              <div style="background:#fff8e1;border-left:4px solid #f5a623;padding:0.6rem 0.8rem;margin-bottom:0.6rem;font-size:0.85rem;color:#5a4a1a;border-radius:4px;">
-                ℹ️ 履歴書の「資格・免許」に入力した内容は<strong>自動で転記されます</strong>（再入力不要）。ここにはそれ以外のスキル（PCスキル・語学など）のみ追記してください。
-              </div>
               <label for="skillsText">資格・スキル一覧</label>
               <textarea id="skillsText" name="skillsText" rows="3" placeholder="Excel（関数・ピボット）、Word&#10;英語（日常会話レベル） など"></textarea>
             </div>
