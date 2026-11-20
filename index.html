@@ -1455,6 +1455,11 @@
     }
 
     /* ===== Photo crop modal ===== */
+    .photo-edit-link.photo-reset-link {
+      color: #c0392b;
+      margin-left: 10px;
+    }
+
     .photo-edit-link {
       background: none;
       border: none;
@@ -1616,6 +1621,7 @@
                 <img id="photoPreview" alt="顔写真プレビュー">
               </div>
               <button type="button" class="photo-edit-link" id="photoEditLink" onclick="openPhotoCropFromDataUrl(photoRawDataUrl)">位置・大きさを調整</button>
+              <button type="button" class="photo-edit-link photo-reset-link" id="photoResetLink" onclick="resetPhoto()">写真を削除</button>
             </div>
             <div class="photo-info">
               <strong>顔写真アップロード</strong>
@@ -2222,6 +2228,23 @@
     applyPhotoCropTransform();
   });
 
+  function resetPhoto() {
+    photoDataUrl = null;
+    photoRawDataUrl = null;
+    document.getElementById('photo').value = '';
+    const preview = document.getElementById('photoPreview');
+    preview.removeAttribute('src');
+    preview.style.display = 'none';
+    document.getElementById('photoPlaceholder').style.display = 'flex';
+    document.getElementById('photoEditLink').style.display = 'none';
+    document.getElementById('photoResetLink').style.display = 'none';
+    // プレビュー表示中なら写真欄も空に戻す
+    if (document.getElementById('resumeDocWrapper').style.display === 'block') {
+      updatePreview();
+    }
+    saveToStorage();
+  }
+
   function cancelPhotoCrop() {
     document.getElementById('photoCropOverlay').classList.remove('open');
     // If there was no photo set before, clear the (now unused) file input
@@ -2255,6 +2278,7 @@
     preview.style.display = 'block';
     placeholder.style.display = 'none';
     document.getElementById('photoEditLink').style.display = 'inline-block';
+    document.getElementById('photoResetLink').style.display = 'inline-block';
 
     document.getElementById('photoCropOverlay').classList.remove('open');
     saveToStorage();
