@@ -2397,7 +2397,7 @@
     const id = ++histRowCounter;
     const tr = document.createElement('tr');
     tr.dataset.type = 'shokureki';
-    const statusOpts = ['入社','退社','在籍中'].map(s =>
+    const statusOpts = ['入社','退社','在籍中','該当なし'].map(s =>
       `<option value="${s}"${(status||'入社')===s?' selected':''}>${s}</option>`).join('');
     tr.innerHTML = `
       <td class="col-year">
@@ -2408,7 +2408,7 @@
       </td>
       <td class="col-content" style="display:flex;gap:4px;align-items:center;">
         <input type="text" id="histCompany_${id}" value="${company||''}" placeholder="会社名" style="flex:1;">
-        <select id="histStatus_${id}" style="width:72px;flex-shrink:0;">${statusOpts}</select>
+        <select id="histStatus_${id}" style="width:90px;flex-shrink:0;">${statusOpts}</select>
       </td>
       <td class="col-action">
         <button class="btn btn-danger" onclick="removeRow('shokurekiBody',this)" aria-label="削除">×</button>
@@ -2758,7 +2758,8 @@
         const selects = tr.querySelectorAll('select');
         const textInput = tr.querySelector('input[type="text"]');
         const monthVal = selects[0] ? selects[0].value : '';
-        const statusVal = selects[1] ? selects[1].value : '';
+        const rawStatus = selects[1] ? selects[1].value : '';
+        const statusVal = rawStatus === '該当なし' ? '' : rawStatus; // 該当なしは履歴書に表記しない
         const nameVal = textInput ? textInput.value : '';
         const content = nameVal && statusVal ? `${nameVal}　${statusVal}` : (nameVal || statusVal);
         rows.push({ type: 'entry', year: seireki2wareki(yearInput ? yearInput.value : ''), month: monthVal, content });
